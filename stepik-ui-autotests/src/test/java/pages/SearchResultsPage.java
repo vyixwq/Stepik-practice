@@ -1,0 +1,68 @@
+package pages;
+
+import components.Button;
+import components.CourseCardItem;
+import com.codeborne.selenide.CollectionCondition;
+import com.codeborne.selenide.ElementsCollection;
+import com.codeborne.selenide.WebDriverConditions;
+
+import java.time.Duration;
+
+import static com.codeborne.selenide.Condition.visible;
+import static com.codeborne.selenide.Selenide.*;
+
+public class SearchResultsPage extends BasePage<SearchResultsPage> {
+
+    public SearchResultsPage() {
+        super($x("//h1[text()='Поиск']"), SearchResultsPage.class);
+    }
+
+    private final ElementsCollection courseCards = $$x("//div[contains(@class, 'course-card')]");
+
+    private final Button clearButton = Button.byClass("search-form__reset");
+
+    private final Button freeFilter = Button.byName("Бесплатно");
+
+    private final Button searchButton = Button.byName("Искать");
+
+    // Второе поле поиска
+    private final components.Input centralSearch = components.Input.byPlaceHolder("Название курса, автор или предмет");
+
+    // Для Тестов 1, 2, 4, 5
+    public String getFirstCourseTitle() {
+        webdriver().shouldHave(WebDriverConditions.urlContaining("search"), Duration.ofSeconds(10));
+        courseCards.shouldHave(CollectionCondition.sizeGreaterThan(0), Duration.ofSeconds(10));
+        return new CourseCardItem(courseCards.first()).getTitle().getText();
+    }
+
+    // Для Теста 3
+    public String getFirstCourseAuthor() {
+        return new CourseCardItem(courseCards.first()).getAuthors().get(0).getText();
+    }
+
+    // Для Теста 7
+    public SearchResultsPage clickClear() {
+        clearButton.click();
+        return this;
+    }
+
+    // Для Теста 8
+    public CoursePage openFirstCourse() {
+        new CourseCardItem(courseCards.first()).getTitle().click();
+        return page(CoursePage.class);
+    }
+
+    // Для Теста 9
+    public SearchResultsPage applyFreeFilter() {
+        freeFilter.click();
+        courseCards.first().shouldBe(visible);
+        return this;
+    }
+
+    // Для Теста 10
+    public SearchResultsPage searchAgain(String text) {
+        centralSearch.fill(text);
+        searchButton.click();
+        return this;
+    }
+}
