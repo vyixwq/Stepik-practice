@@ -17,7 +17,7 @@ public class CourseCardItem extends BasePageComponent {
         super(element);
 
         title = new CourseCardText(
-                baseElement.$x(".//a[contains(@class,'course-card__text')]")
+                baseElement.$x(".//a[contains(@class,'course-card__title')]")
         );
 
         authors = baseElement
