@@ -37,6 +37,13 @@ public class SearchResultsPage extends BasePage<SearchResultsPage> {
 
     // Для Теста 3
     public String getFirstCourseAuthor() {
+        webdriver().shouldHave(WebDriverConditions.urlContaining("search"), Duration.ofSeconds(15));
+        
+        courseCards.shouldHave(CollectionCondition.sizeGreaterThan(0), Duration.ofSeconds(15));
+        
+        courseCards.first().$x(".//a[contains(@class, 'course-card__author')]")
+                .shouldBe(visible, Duration.ofSeconds(10));
+        
         return new CourseCardItem(courseCards.first()).getAuthors().get(0).getText();
     }
 
