@@ -8,7 +8,6 @@ public class SearchComponent extends BasePageComponent {
     private static final String XPATH = "//div[@class='%s']";
 
     private final Input searchInput = Input.byPlaceHolder("Название курса, автор или предмет");
-    private final Button searchButton = Button.byName("Искать");
 
     protected SearchComponent(String xpath, String attributeValue) { super(xpath, attributeValue); }
 
@@ -18,6 +17,6 @@ public class SearchComponent extends BasePageComponent {
 
     public void search(String value) {
         searchInput.fill(value);
-        searchButton.click();
+        searchInput.getElement().pressEnter();
     }
 }
