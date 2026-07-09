@@ -9,6 +9,8 @@ public class SearchComponent extends BasePageComponent {
 
     private final Input searchInput = Input.byPlaceHolder("Название курса, автор или предмет");
 
+    private final Button searchButton = Button.byName("Искать");
+
     protected SearchComponent(String xpath, String attributeValue) { super(xpath, attributeValue); }
 
     public static SearchComponent byClass(String className) {
@@ -17,6 +19,6 @@ public class SearchComponent extends BasePageComponent {
 
     public void search(String value) {
         searchInput.fill(value);
-        searchInput.getElement().pressEnter();
+        searchButton.click();
     }
 }

@@ -13,7 +13,7 @@ public abstract class BaseTest {
     static void setupBrowser() {
 
         Configuration.browser = "chrome";
-        Configuration.timeout = 8000;
+        Configuration.timeout = 10000;
         Configuration.baseUrl = "https://stepik.org/catalog";
     }
 

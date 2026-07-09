@@ -5,6 +5,7 @@ import components.CourseCardItem;
 import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.WebDriverConditions;
+import components.SearchComponent;
 
 import java.time.Duration;
 
@@ -12,26 +13,23 @@ import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.*;
 
 public class SearchResultsPage extends BasePage<SearchResultsPage> {
-
-    public SearchResultsPage() {
-        super($x("//h1[text()='Поиск']"), SearchResultsPage.class);
-    }
-
     private final ElementsCollection courseCards = $$x("//div[contains(@class, 'course-card')]");
 
     private final Button clearButton = Button.byClass("search-form__reset");
 
     private final Button freeFilter = Button.byName("Бесплатно");
 
-    private final Button searchButton = Button.byName("Искать");
+    public SearchResultsPage() {
+        super($x("//h1[text()='Поиск']"), SearchResultsPage.class);
+    }
 
     // Второе поле поиска
-    private final components.Input centralSearch = components.Input.byPlaceHolder("Название курса, автор или предмет");
+    private final SearchComponent centralSearch = components.SearchComponent.byClass("catalog-w__search-form");
 
     // Для Тестов 1, 2, 4, 5
     public String getFirstCourseTitle() {
-        webdriver().shouldHave(WebDriverConditions.urlContaining("search"), Duration.ofSeconds(10));
-        courseCards.shouldHave(CollectionCondition.sizeGreaterThan(0), Duration.ofSeconds(10));
+        webdriver().shouldHave(WebDriverConditions.urlContaining("search"), Duration.ofSeconds(15));
+        courseCards.shouldHave(CollectionCondition.sizeGreaterThan(0), Duration.ofSeconds(15));
         return new CourseCardItem(courseCards.first()).getTitle().getText();
     }
 
@@ -68,8 +66,7 @@ public class SearchResultsPage extends BasePage<SearchResultsPage> {
 
     // Для Теста 10
     public SearchResultsPage searchAgain(String text) {
-        centralSearch.fill(text);
-        searchButton.click();
+        centralSearch.search(text);
         return this;
     }
 }
