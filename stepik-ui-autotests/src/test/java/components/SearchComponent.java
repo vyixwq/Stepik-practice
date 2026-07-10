@@ -21,4 +21,6 @@ public class SearchComponent extends BasePageComponent {
         searchInput.fill(value);
         searchButton.click();
     }
+
+    public String getCurrentInputValue() { return searchInput.getValue(); }
 }

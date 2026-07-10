@@ -10,6 +10,7 @@ public interface ClickableComponent {
     SelenideElement getElement();
 
     default void click() {
-        getElement().click();
+        getElement().shouldBe(visible, Duration.ofSeconds(20)).click();
     }
+
 }

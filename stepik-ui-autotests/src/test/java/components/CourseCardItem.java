@@ -5,13 +5,14 @@ import com.codeborne.selenide.SelenideElement;
 import java.util.List;
 
 /*
-* Элемент списка результатов - хранит базисные элементы Название и авторы курса
-* */
+ * Элемент списка результатов - хранит базисные элементы Название и авторы курса
+ * */
 
 public class CourseCardItem extends BasePageComponent {
 
     private final CourseCardText title;
     private final List<CourseCardText> authors;
+    private final Button favoriteButton;
 
     public CourseCardItem(SelenideElement element) {
         super(element);
@@ -25,7 +26,13 @@ public class CourseCardItem extends BasePageComponent {
                 .stream()
                 .map(CourseCardText::new)
                 .toList();
+
+        favoriteButton = new Button(baseElement.$x(".//button[contains(@class, 'course-card__bookmark')]"));
     }
+
+    public void addToWishlist() { favoriteButton.click(); }
+
+    public void clickFirstAuthor() { authors.get(0).click(); }
 
     public CourseCardText getTitle() {
         return title;
@@ -34,15 +41,5 @@ public class CourseCardItem extends BasePageComponent {
     public List<CourseCardText> getAuthors() {
         return authors;
     }
-
-    public boolean hasTitle(String text, boolean isFullMatch) {
-        return isFullMatch ? title.getText().equalsIgnoreCase(text) : title.getText().contains(text);
-    }
-
-    public boolean hasAuthor(String name, boolean isFullMatch) {
-        return authors.stream().anyMatch(
-                author -> isFullMatch ? author.getText().equalsIgnoreCase(name) : author.getText().contains(name));
-    }
-
 
 }

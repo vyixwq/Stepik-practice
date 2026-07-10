@@ -7,6 +7,8 @@ public class Button extends BasePageComponent implements ClickableComponent {
 
     protected Button(String xpath, String buttonName) { super(xpath, buttonName); }
 
+    protected Button(SelenideElement element) { super(element); }
+
     public static Button byName(String name) {
         return new Button(XPATH, name);
     }
