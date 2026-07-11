@@ -1,11 +1,16 @@
 package pages;
 
+import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.ex.ElementNotFound;
 import components.Button;
 import components.CourseCardItem;
 import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.WebDriverConditions;
+import components.FilterComponent;
 import components.SearchComponent;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.time.Duration;
 
@@ -13,60 +18,163 @@ import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.*;
 
 public class SearchResultsPage extends BasePage<SearchResultsPage> {
-    private final ElementsCollection courseCards = $$x("//div[contains(@class, 'course-card')]");
 
+    private static final Logger logger = LogManager.getLogger(SearchResultsPage.class);
+
+    // Кнопка очистки поиска ("крестик")
     private final Button clearButton = Button.byClass("search-form__reset");
 
+    // Кнопка "Бесплатно"
     private final Button freeFilter = Button.byName("Бесплатно");
+
+    // Компонент центрального поля поиска
+    private final SearchComponent centralSearch = SearchComponent.byClass("catalog-w__search-form");
+
+    // Компонент всех фильтров
+    private final FilterComponent filter = FilterComponent.byClass("search-form-filters catalog-w__filters");
+
+    // Кнопка "Далее" для пагинации
+    private final Button nextButton = Button.byName("Далее");
 
     public SearchResultsPage() {
         super($x("//h1[text()='Поиск']"), SearchResultsPage.class);
+        logger.debug("Страница результатов поиска инициализирована");
     }
 
-    // Второе поле поиска
-    private final SearchComponent centralSearch = components.SearchComponent.byClass("catalog-w__search-form");
-
-    // Для Тестов 1, 2, 4, 5
-    public String getFirstCourseTitle() {
-        webdriver().shouldHave(WebDriverConditions.urlContaining("search"), Duration.ofSeconds(15));
-        courseCards.shouldHave(CollectionCondition.sizeGreaterThan(0), Duration.ofSeconds(15));
-        return new CourseCardItem(courseCards.first()).getTitle().getText();
+    public void closeCookieBanner() {
+        logger.debug("Проверка наличия баннера cookie");
+        com.codeborne.selenide.SelenideElement cookieButton = com.codeborne.selenide.Selenide.$x("//button[contains(text(), 'Хорошо')]");
+        if (cookieButton.exists()) {
+            cookieButton.click();
+            logger.info("Баннер cookie закрыт");
+        } else {
+            logger.debug("Баннер cookie не найден");
+        }
     }
 
-    // Для Теста 3
-    public String getFirstCourseAuthor() {
-        webdriver().shouldHave(WebDriverConditions.urlContaining("search"), Duration.ofSeconds(15));
-        
-        courseCards.shouldHave(CollectionCondition.sizeGreaterThan(0), Duration.ofSeconds(15));
-        
-        courseCards.first().$x(".//a[contains(@class, 'course-card__author')]")
-                .shouldBe(visible, Duration.ofSeconds(10));
-        
-        return new CourseCardItem(courseCards.first()).getAuthors().get(0).getText();
+    /**
+     * Получает карточку курса по индексу
+     */
+    public CourseCardItem getCourseCard(int index) {
+        logger.debug("Получение карточки курса с индексом: {}", index);
+        ElementsCollection cards = $$(".course-card");
+        cards.shouldHave(CollectionCondition.sizeGreaterThan(index), Duration.ofSeconds(20));
+        logger.debug("Карточка курса с индексом {} получена", index);
+        return new CourseCardItem(cards.get(index));
     }
 
-    // Для Теста 7
-    public SearchResultsPage clickClear() {
-        clearButton.click();
+    /**
+     * Переход на следующую страницу результатов
+     */
+    public SearchResultsPage clickNext() {
+        logger.info("Переход на следующую страницу результатов");
+        closeCookieBanner();
+
+        $(".catalog__paging").scrollTo();
+        logger.debug("Прокрутка к пагинации");
+
+        nextButton.getElement().shouldBe(visible, Duration.ofSeconds(10));
+        nextButton.click();
+        logger.info("Кнопка 'Далее' нажата");
+
+        $$(".course-card").shouldHave(CollectionCondition.sizeGreaterThan(0), Duration.ofSeconds(10));
+        logger.info("Переход на следующую страницу выполнен");
+
         return this;
     }
 
-    // Для Теста 8
+    /**
+     * Открывает первый курс из результатов поиска
+     */
     public CoursePage openFirstCourse() {
-        new CourseCardItem(courseCards.first()).getTitle().click();
+        logger.info("Открытие первого курса");
+        getCourseCard(0).getTitle().click();
+        logger.info("Первый курс открыт");
         return page(CoursePage.class);
     }
 
-    // Для Теста 9
-    public SearchResultsPage applyFreeFilter() {
-        freeFilter.click();
-        courseCards.first().shouldBe(visible);
+    /**
+     * Применяет фильтр по чекбоксу
+     */
+    public SearchResultsPage applyCheckBoxFilter(String filterType, String value) {
+        logger.info("Применение чекбокса: {} = {}", filterType, value);
+        filter.filterByCheckBox(filterType, value);
+        logger.info("Чекбокс {} = {} применен", filterType, value);
         return this;
     }
 
-    // Для Теста 10
+    /**
+     * Применяет фильтр по ценовому диапазону
+     */
+    public SearchResultsPage applyPriceFilter(String minValue, String maxValue) {
+        logger.info("Применение ценового фильтра: от {} до {}", minValue, maxValue);
+        filter.filterByPrice(minValue, maxValue);
+        logger.info("Ценовой фильтр применен");
+        return this;
+    }
+
+    /**
+     * Возвращает заголовок первого курса
+     */
+    public String getFirstCourseTitle() {
+        logger.debug("Получение заголовка первого курса");
+        webdriver().shouldHave(WebDriverConditions.urlContaining("search"), Duration.ofSeconds(15));
+        String title = getCourseCard(0).getTitle().getText();
+        logger.debug("Заголовок первого курса: '{}'", title);
+        return title;
+    }
+
+    // Возвращает имя первого автора из первой карточки курса
+    public String getFirstCourseAuthor() {
+        webdriver().shouldHave(WebDriverConditions.urlContaining("search"), Duration.ofSeconds(15));
+        return getCourseCard(0).getAuthors().get(0).getText();
+    }
+
+    /**
+     * Нажимает на кнопку очистки поиска ("крестик").
+     */
+    public SearchResultsPage clickClear() {
+        logger.info("Очистка поля поиска (нажатие на крестик)");
+        clearButton.click();
+        logger.info("Поле поиска очищено");
+        return this;
+    }
+
+    /**
+     * Выполняет поиск по новому запросу на странице результатов.
+     * Заполняет центральное поле поиска и нажимает кнопку "Искать".
+     */
     public SearchResultsPage searchAgain(String text) {
+        logger.info("Повторный поиск по запросу: '{}'", text);
         centralSearch.search(text);
+        logger.info("Повторный поиск выполнен");
+        return this;
+    }
+
+    /**
+     * Применяет тумблер-фильтр.
+     */
+    public SearchResultsPage applyTogglerFilter(String togglerType) {
+        logger.info("Применение тумблера: {}", togglerType);
+        filter.filterByToggler(togglerType);
+        logger.info("Тумблер {} применен", togglerType);
+        return this;
+    }
+
+    /**
+     * Возвращает текущее значение в поле поиска.
+     * Используется для проверки, что поле было очищено или содержит нужный текст.
+     */
+    public String getSearchInputValue() {
+        String value = centralSearch.getCurrentInputValue();
+        logger.debug("Текущее значение поля поиска: '{}'", value);
+        return value;
+    }
+
+    public SearchResultsPage applyOnlyFreeFilter() {
+        logger.info("Применение фильтра 'Бесплатно' через FilterComponent");
+        filter.filterOnlyFree();
+        logger.info("Фильтр 'Бесплатно' применен");
         return this;
     }
 }
