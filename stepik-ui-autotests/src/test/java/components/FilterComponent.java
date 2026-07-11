@@ -37,9 +37,12 @@ public class FilterComponent extends BasePageComponent {
         usingCheckBox.getCheckBoxByValue(value).click();
     }
 
+    public void filterByMinPrice(String minPrice) {
+        priceFilter.getminValueInput().fill(minPrice);
+    }
 
-    public void filterByPrice(String minPrice, String maxPrice) {
-        priceFilter.setPriceRange(minPrice, maxPrice);
+    public void filterByMaxPrice(String maxPrice) {
+        priceFilter.getmaxValueInput().fill(maxPrice);
     }
 
     public void filterOnlyFree() {

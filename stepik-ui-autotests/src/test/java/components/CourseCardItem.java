@@ -1,7 +1,8 @@
 package components;
 
 import com.codeborne.selenide.SelenideElement;
-
+import java.time.Duration;
+import static com.codeborne.selenide.Condition.visible;
 import java.util.List;
 
 /*
@@ -32,7 +33,11 @@ public class CourseCardItem extends BasePageComponent {
 
     public void addToWishlist() { favoriteButton.click(); }
 
-    public void clickFirstAuthor() { authors.get(0).click(); }
+    public void clickFirstAuthor() {
+        baseElement.$x(".//a[contains(@class,'course-card__author')]")
+                .shouldBe(visible, Duration.ofSeconds(10))
+                .click();
+    }
 
     public CourseCardText getTitle() {
         return title;

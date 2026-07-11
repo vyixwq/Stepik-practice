@@ -104,12 +104,22 @@ public class SearchResultsPage extends BasePage<SearchResultsPage> {
     }
 
     /**
-     * Применяет фильтр по ценовому диапазону
+     * Применяет фильтр по минимальной цене
      */
-    public SearchResultsPage applyPriceFilter(String minValue, String maxValue) {
-        logger.info("Применение ценового фильтра: от {} до {}", minValue, maxValue);
-        filter.filterByPrice(minValue, maxValue);
-        logger.info("Ценовой фильтр применен");
+    public SearchResultsPage applyMinPriceFilter(String minValue) {
+        logger.info("Применение минимальной цены: {}", minValue);
+        filter.filterByMinPrice(minValue);
+        logger.info("Минимальная цена применилась");
+        return this;
+    }
+
+    /**
+     * Применяет фильтр по максимальной цене
+     */
+    public SearchResultsPage applyMaxPriceFilter(String maxValue) {
+        logger.info("Применение максимальной цены: {}", maxValue);
+        filter.filterByMaxPrice(maxValue);
+        logger.info("Максимальная цена применилась");
         return this;
     }
 

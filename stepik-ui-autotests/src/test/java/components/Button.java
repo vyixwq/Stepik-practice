@@ -1,5 +1,6 @@
 package components;
 
+import com.codeborne.selenide.SelenideElement;
 
 public class Button extends BasePageComponent implements ClickableComponent {
     private static final String XPATH = "//button[contains(., '%s')]";
