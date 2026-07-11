@@ -3,7 +3,7 @@ package components;
 import java.util.List;
 
 public class PriceFilterElement extends BasePageComponent {
-    private static final String XPATH = "//div[@date-name='%s']";
+    private static final String XPATH = "//div[@data-name='%s']";
 
     private final Input minValueInput = Input.byPlaceHolder("0");
     private final Input maxValueInput = Input.byPlaceHolder("250000");

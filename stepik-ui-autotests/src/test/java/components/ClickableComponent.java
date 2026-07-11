@@ -1,6 +1,8 @@
 package components;
 
 import com.codeborne.selenide.SelenideElement;
+import java.time.Duration;
+import static com.codeborne.selenide.Condition.visible;
 
 /*
 * Интерфейс для кликабельных объектов с соответствующим методом click
