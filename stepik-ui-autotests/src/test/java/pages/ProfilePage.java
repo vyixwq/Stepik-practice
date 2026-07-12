@@ -2,6 +2,7 @@ package pages;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
+import java.time.Duration;
 
 import static com.codeborne.selenide.Selenide.$x;
 
@@ -17,7 +18,9 @@ public class ProfilePage extends BasePage<ProfilePage> {
 
     public void openReviews() {
         logger.info("Открытие вкладки 'Отзывы'");
-        reviewsTab.shouldBe(Condition.visible).click();
-        logger.info("Вкладка 'Отзывы' открыта");
+        reviewsTab.shouldBe(Condition.visible, Duration.ofSeconds(10)).click();
+        reviewsHeader.shouldBe(Condition.visible, Duration.ofSeconds(10));
+        
+        logger.info("Вкладка 'Отзывы' открыта, заголовок прогружен");
     }
 }
