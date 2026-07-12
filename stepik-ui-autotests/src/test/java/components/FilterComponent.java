@@ -1,5 +1,6 @@
 package components;
 
+import static com.codeborne.selenide.Condition.visible;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -45,10 +46,14 @@ public class FilterComponent extends BasePageComponent {
             return;
         }
 
-        CheckBoxFilterElement usingCheckBox = checkBoxType.equals("difficulty") ? difficultyFilter
-                : checkBoxType.equals("language") ? languageFilter : typeFilter;
+        CheckBoxFilterElement usingCheckBox = checkBoxType.equals("difficulty") ? difficultyFilter : checkBoxType.equals("language") ? languageFilter : typeFilter;
 
+    // 1. Сначала скроллим к блоку фильтра и ждем его видимости
+        usingCheckBox.getElement().scrollTo().shouldBe(visible);
+    
+    // 2. Затем кликаем по конкретному чекбоксу (используем метод .click() из нашего интерфейса, так как там есть логгер)
         usingCheckBox.getCheckBoxByValue(value).click();
+
         logger.info("Фильтр {} = {} применен", checkBoxType, value);
     }
 
@@ -98,6 +103,11 @@ public class FilterComponent extends BasePageComponent {
         } else {
             logger.info("Тумблер {} уже активен", togglerType);
         }
+    }
+
+    public boolean isCheckBoxSelected(String checkBoxType, String value) {
+        CheckBoxFilterElement filter = checkBoxType.equals("difficulty") ? difficultyFilter : checkBoxType.equals("language") ? languageFilter : typeFilter;
+        return filter.getCheckBoxByValue(value).getElement().$x(".//input").isSelected();
     }
 
 }

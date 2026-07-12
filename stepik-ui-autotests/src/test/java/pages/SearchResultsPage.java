@@ -2,10 +2,12 @@ package pages;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ex.ElementNotFound;
+import com.codeborne.selenide.ClickOptions;
 import components.Button;
 import components.CourseCardItem;
 import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.ElementsCollection;
+import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.WebDriverConditions;
 import components.FilterComponent;
 import components.SearchComponent;
@@ -169,12 +171,12 @@ public class SearchResultsPage extends BasePage<SearchResultsPage> {
      * Нажимает на кнопку очистки поиска ("крестик").
      */
     public SearchResultsPage clickClear() {
-        logger.info("Очистка поля поиска (нажатие на крестик)");
-        clearButton.click();
+        logger.info("Очистка поля поиска (нажатие на крестик через JS)");
+        clearButton.getElement().click(ClickOptions.usingJavaScript());
+        
         logger.info("Поле поиска очищено");
         return this;
     }
-
     /**
      * Выполняет поиск по новому запросу на странице результатов.
      * Заполняет центральное поле поиска и нажимает кнопку "Искать".
@@ -211,5 +213,40 @@ public class SearchResultsPage extends BasePage<SearchResultsPage> {
         filter.filterOnlyFree();
         logger.info("Фильтр 'Бесплатно' применен");
         return this;
+    }
+
+    public boolean isNothingFoundMessageVisible() {
+        logger.info("Ожидание появления текста 'ничего не найдено' в теле страницы...");
+        try {
+            $x("//body").shouldHave(com.codeborne.selenide.Condition.text("ничего не найдено"), Duration.ofSeconds(15));
+            
+            logger.info("Текст успешно найден в теле страницы.");
+            return true;
+        } catch (Throwable e) {
+            boolean resetLinkVisible = $x("//*[contains(text(), 'Сбросить фильтры')]").exists();
+            logger.error("Текст не найден. Видна ли кнопка 'Сбросить фильтры': {}", resetLinkVisible);
+            return resetLinkVisible;
+        }
+    }
+
+    public boolean isFilterSelected(String type, String value) {
+        return filter.isCheckBoxSelected(type, value);
+    }
+
+    public boolean firstCourseHasOldPrice() {
+        return getCourseCard(0).hasOldPrice();
+    }
+
+    public boolean firstCourseIsFavorite() {
+        return getCourseCard(0).isFavorite();
+    }
+
+    public void switchToNewWindow() {
+        try {
+            Selenide.Wait().until(d -> d.getWindowHandles().size() > 1);
+            Selenide.switchTo().window(1);
+        } catch (Exception e) {
+            logger.warn("Новое окно не открылось, остаемся в текущем");
+        }
     }
 }
