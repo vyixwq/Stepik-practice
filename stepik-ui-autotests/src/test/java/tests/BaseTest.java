@@ -6,6 +6,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
+/**
+ * Базовый класс для всех тестов.
+ * Настраивает браузер и управляет его открытием/закрытием.
+ */
 
 public abstract class BaseTest {
 
