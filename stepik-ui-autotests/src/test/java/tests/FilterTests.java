@@ -29,8 +29,9 @@ public class FilterTests extends BaseTest {
         logger.info("Проверка отображения результатов фильтрации по Linux");
         String firstTitle = resultsPage.getFirstCourseTitle();
 
-        Assertions.assertTrue(firstTitle.toLowerCase().contains("linux"),
-                "Первый найденный курс '" + firstTitle + "' должен содержать ключевое слово 'Linux'");
+        Assertions.assertTrue(
+                firstTitle.toLowerCase().contains("linux"),
+                String.format("Первый найденный курс '%s' должен содержать ключевое слово 'Linux'", firstTitle));
 
         logger.info("=== ТЕСТ 2 УСПЕШНО ЗАВЕРШЕН ===\n");
     }
@@ -51,8 +52,11 @@ public class FilterTests extends BaseTest {
         logger.info("Проверка отображения результатов в ценовом диапазоне");
         String firstTitle = resultsPage.getFirstCourseTitle();
 
-        Assertions.assertTrue(firstTitle.toLowerCase().contains("java"),
-                "Первый найденный курс в ценовом диапазоне '" + firstTitle + "' должен соответствовать запросу 'Java'");
+        Assertions.assertTrue(
+                firstTitle.toLowerCase().contains("java"),
+                String.format(
+                        "Первый найденный курс в ценовом диапазоне '%s' должен соответствовать запросу 'Java'",
+                        firstTitle));
 
         logger.info("=== ТЕСТ 3 УСПЕШНО ЗАВЕРШЕН ===\n");
     }
@@ -75,11 +79,13 @@ public class FilterTests extends BaseTest {
 
         Assertions.assertTrue(
                 firstTitle.toLowerCase().contains("qa") || firstTitle.toLowerCase().contains("automation"),
-                "Найденный курс '" + firstTitle + "' должен соответствовать тематике 'QA Automation'");
+                String.format(
+                        "Найденный курс '%s' должен соответствовать тематике 'QA Automation'",
+                        firstTitle));
 
         logger.info("=== ТЕСТ 4 УСПЕШНО ЗАВЕРШЕН ===\n");
     }
-
+    
     @Test
     @DisplayName("6. Смена запроса с сохранением фильтра")
     void testChangeQueryKeepFilter() {
@@ -97,10 +103,12 @@ public class FilterTests extends BaseTest {
 
         logger.info("Проверка сохранения фильтра и смены текста");
         String firstTitle = resultsPage.getFirstCourseTitle();
-        Assertions.assertTrue(firstTitle.toLowerCase().contains("data") || firstTitle.toLowerCase().contains("science"),
+        Assertions.assertTrue(
+                firstTitle.toLowerCase().contains("data") || firstTitle.toLowerCase().contains("science"),
                 "Заголовок должен содержать 'Data Science'");
 
-        Assertions.assertTrue(resultsPage.isFilterSelected("language", "en"),
+        Assertions.assertTrue(
+                resultsPage.isFilterSelected("language", "en"),
                 "Фильтр 'Английский' должен остаться активным");
 
         logger.info("=== ТЕСТ 6 УСПЕШНО ЗАВЕРШЕН ===\n");
@@ -117,29 +125,31 @@ public class FilterTests extends BaseTest {
         resultsPage.applyCheckBoxFilter("difficulty", "easy");
 
         logger.info("Проверка отображения заглушки...");
-        Assertions.assertTrue(resultsPage.isNothingFoundMessageVisible(),
+        Assertions.assertTrue(
+                resultsPage.isNothingFoundMessageVisible(),
                 "На странице должно быть сообщение 'ничего не найдено'");
 
         logger.info("=== ТЕСТ 7 УСПЕШНО ЗАВЕРШЕН ===\n");
     }
 
-     @Test
+        @Test
     @DisplayName("9. Фильтрация акционных курсов")
     void testFilteringPromoCourses() {
         logger.info("=== ТЕСТ 9: Фильтрация акционных курсов ===");
 
         SearchResultsPage resultsPage = new HomePage().openPage().searchFor("Backend");
 
+        resultsPage.applyCheckBoxFilter("type", "spec");
+
         resultsPage.applyTogglerFilter("discount");
 
-        resultsPage.applyCheckBoxFilter("type", "spec");
         logger.info("Ожидание обновления результатов фильтрации...");
         com.codeborne.selenide.Selenide.sleep(2000);
 
         logger.info("Проверка наличия старой цены на карточках результатов");
 
         boolean foundPromo = false;
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 20; i++) {
             CourseCardItem card = resultsPage.getCourseCard(i);
             if (card != null && card.hasOldPrice()) {
                 foundPromo = true;
@@ -148,7 +158,8 @@ public class FilterTests extends BaseTest {
             }
         }
 
-        Assertions.assertTrue(foundPromo,
+        Assertions.assertTrue(
+                foundPromo,
                 "В результатах фильтрации должен быть хотя бы один курс с отображаемой старой ценой");
 
         logger.info("=== ТЕСТ 9 УСПЕШНО ЗАВЕРШЕН ===\n");
@@ -166,9 +177,11 @@ public class FilterTests extends BaseTest {
         resultsPage.getCourseCard(0).addToWishlist();
 
         logger.info("Проверка, что курс добавлен в избранное");
-        Assertions.assertTrue(resultsPage.firstCourseIsFavorite(),
+        Assertions.assertTrue(
+                resultsPage.firstCourseIsFavorite(),
                 "Иконка сердечка должна изменить состояние на активное");
 
         logger.info("=== ТЕСТ 10 УСПЕШНО ЗАВЕРШЕН ===\n");
     }
+
 }

@@ -34,8 +34,9 @@ public class SearchTests extends BaseTest {
         Selenide.switchTo().window(1);
         String actualTitle = new CoursePage().getCourseTitle();
 
-        Assertions.assertTrue(actualTitle.toLowerCase().contains("python"),
-                "Заголовок курса '" + actualTitle + "' должен содержать ключевое слово 'Python'");
+        Assertions.assertTrue(
+                actualTitle.toLowerCase().contains("python"),
+                String.format("Заголовок курса '%s' должен содержать ключевое слово 'Python'", actualTitle));
 
         logger.info("=== ТЕСТ 1 УСПЕШНО ЗАВЕРШЕН ===\n");
     }
@@ -56,11 +57,13 @@ public class SearchTests extends BaseTest {
         logger.info("Проверка, что поле поиска очищено, а выдача сбросилась");
         String searchInputValue = resultsPage.getSearchInputValue();
 
-        Assertions.assertTrue(searchInputValue == null || searchInputValue.isEmpty(),
+        Assertions.assertTrue(
+                searchInputValue == null || searchInputValue.isEmpty(),
                 "Поле поиска должно быть пустым после нажатия на крестик!");
 
         String firstCourseTitle = resultsPage.getFirstCourseTitle();
-        Assertions.assertFalse(firstCourseTitle.isEmpty(),
+        Assertions.assertFalse(
+                firstCourseTitle.isEmpty(),
                 "Каталог общего поиска должен успешно отображаться после сброса параметров");
 
         logger.info("=== ТЕСТ 5 УСПЕШНО ЗАВЕРШЕН ===\n");
