@@ -16,19 +16,18 @@ import static com.codeborne.selenide.Condition.visible;
 public interface ClickableComponent {
     Logger logger = LogManager.getLogger(ClickableComponent.class);
     SelenideElement getElement();
-
+    int WAIT_SECONDS = 15;
     /**
      * Метод для клика по объекту
      * */
     default void click() {
         logger.info("Клик по элементу");
         try {
-            getElement().shouldBe(visible, Duration.ofSeconds(30)).click();
+            getElement().shouldBe(visible, Duration.ofSeconds(WAIT_SECONDS)).click();
             logger.info("Клик выполнен");
         }
         catch (ElementNotFound e) {
-            logger.warn("Ошибка: нельзя кликнуть по элементу, которого нет на странице либо он не успел прогрузиться");
+            logger.error("Ошибка: не удалось выполнить клик по элементу: {}", e.getMessage());
         }
     }
-
 }

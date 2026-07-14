@@ -6,7 +6,7 @@ import org.apache.logging.log4j.Logger;
 /**
  * Класс тумблера - реализует функционал работы с тумблерами
  * */
-public class ToggleFilterElement extends BasePageComponent {
+public class ToggleFilterElement extends BaseComponent {
     private static final Logger logger = LogManager.getLogger(ToggleFilterElement.class);
     private static final String XPATH = "//div[@data-name='%s']//div[@class='ui-toggler']";
 

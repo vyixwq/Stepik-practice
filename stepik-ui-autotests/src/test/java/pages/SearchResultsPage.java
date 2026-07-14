@@ -56,7 +56,6 @@ public class SearchResultsPage extends BasePage<SearchResultsPage> {
         if (cookieButton.exists()) {
             cookieButton.click();
             logger.info("Баннер cookie закрыт");
-        } else {
         }
     }
 
@@ -66,7 +65,7 @@ public class SearchResultsPage extends BasePage<SearchResultsPage> {
     public CourseCardItem getCourseCard(int index) {
         try {
             ElementsCollection cards = $$(".course-card");
-            cards.shouldHave(CollectionCondition.sizeGreaterThan(index), Duration.ofSeconds(20));
+            cards.shouldHave(CollectionCondition.sizeGreaterThan(index), Duration.ofSeconds(WAIT_SECONDS));
             return new CourseCardItem(cards.get(index));
         } catch (AssertionError e) {
             logger.warn("Карточка курса с индексом {} не найдена: {}", index, e.getMessage());
@@ -77,22 +76,22 @@ public class SearchResultsPage extends BasePage<SearchResultsPage> {
     /**
      * Переходит на следующую страницу результатов.
      */
-    public SearchResultsPage clickNext() {
+    public void clickNext() {
         logger.info("Переход на следующую страницу результатов");
         closeCookieBanner();
 
         try {
             paginationBlock.scrollTo();
 
-            nextButton.getElement().shouldBe(visible, Duration.ofSeconds(10));
+            nextButton.getElement().shouldBe(visible, Duration.ofSeconds(WAIT_SECONDS));
             nextButton.click();
 
-            $$(".course-card").shouldHave(CollectionCondition.sizeGreaterThan(0), Duration.ofSeconds(10));
-        } catch (AssertionError e) {
-            logger.warn("Ошибка при переходе на следующую страницу: {}", e.getMessage());
-        }
+            ElementsCollection cards = $$(".course-card");
 
-        return this;
+            cards.shouldHave(CollectionCondition.sizeGreaterThan(0), Duration.ofSeconds(WAIT_SECONDS));
+        } catch (AssertionError e) {
+            logger.error("Ошибка при переходе на следующую страницу: {}", e.getMessage());
+        }
     }
 
     /**
@@ -104,7 +103,7 @@ public class SearchResultsPage extends BasePage<SearchResultsPage> {
             getCourseCard(0).getTitle().click();
             return page(CoursePage.class);
         } catch (AssertionError e) {
-            logger.warn("Не удалось открыть первый курс: {}", e.getMessage());
+            logger.error("Не удалось открыть первый курс: {}", e.getMessage());
             return null;
         }
     }
@@ -112,27 +111,24 @@ public class SearchResultsPage extends BasePage<SearchResultsPage> {
     /**
      * Применяет фильтр по чекбоксу.
      */
-    public SearchResultsPage applyCheckBoxFilter(String filterType, String value) {
+    public void applyCheckBoxFilter(String filterType, String value) {
         filter.filterByCheckBox(filterType, value);
-        return this;
     }
 
     /**
      * Применяет фильтр по минимальной цене.
      */
-    public SearchResultsPage applyMinPriceFilter(String minValue) {
+    public void applyMinPriceFilter(String minValue) {
         logger.info("Применение минимальной цены: {}", minValue);
         filter.filterByMinPrice(minValue);
-        return this;
     }
 
     /**
      * Применяет фильтр по максимальной цене.
      */
-    public SearchResultsPage applyMaxPriceFilter(String maxValue) {
+    public void applyMaxPriceFilter(String maxValue) {
         logger.info("Применение максимальной цены: {}", maxValue);
         filter.filterByMaxPrice(maxValue);
-        return this;
     }
 
     /**
@@ -140,11 +136,13 @@ public class SearchResultsPage extends BasePage<SearchResultsPage> {
      */
     public String getFirstCourseTitle() {
         try {
-            webdriver().shouldHave(WebDriverConditions.urlContaining("search"), Duration.ofSeconds(15));
-            String title = getCourseCard(0).getTitle().getText();
-            return title;
+            webdriver().shouldHave(
+                    WebDriverConditions.urlContaining("search"),
+                    Duration.ofSeconds(WAIT_SECONDS)
+            );
+            return getCourseCard(0).getTitle().getText();
         } catch (AssertionError e) {
-            logger.warn("Не удалось получить заголовок первого курса: {}", e.getMessage());
+            logger.error("Не удалось получить заголовок первого курса: {}", e.getMessage());
             return "";
         }
     }
@@ -152,35 +150,31 @@ public class SearchResultsPage extends BasePage<SearchResultsPage> {
     /**
      * Нажимает на кнопку очистки поиска ("крестик").
      */
-    public SearchResultsPage clickClear() {
+    public void clickClear() {
         clearButton.getElement().click(ClickOptions.usingJavaScript());
-        return this;
     }
 
     /**
      * Выполняет новый поиск на странице результатов.
      */
-    public SearchResultsPage searchAgain(String text) {
+    public void searchAgain(String text) {
         logger.info("Повторный поиск по запросу: '{}'", text);
         centralSearch.search(text);
-        return this;
     }
 
     /**
      * Применяет тумблер-фильтр.
      */
-    public SearchResultsPage applyTogglerFilter(String togglerType) {
+    public void applyTogglerFilter(String togglerType) {
         logger.info("Применение тумблера: {}", togglerType);
         filter.filterByToggler(togglerType);
-        return this;
     }
 
     /**
      * Возвращает текущее значение в поле поиска.
      */
     public String getSearchInputValue() {
-        String value = centralSearch.getCurrentInputValue();
-        return value;
+        return centralSearch.getCurrentInputValue();
     }
 
     /**
@@ -188,7 +182,8 @@ public class SearchResultsPage extends BasePage<SearchResultsPage> {
      */
     public boolean isNothingFoundMessageVisible() {
         try {
-            $x("//body").shouldHave(Condition.text("ничего не найдено"), Duration.ofSeconds(15));
+            SelenideElement bodyOfPage = $x("//body");
+            bodyOfPage.shouldHave(Condition.text("ничего не найдено"), Duration.ofSeconds(WAIT_SECONDS));
             return true;
         } catch (Throwable e) {
             boolean resetLinkVisible = $x("//*[contains(text(), 'Сбросить фильтры')]").exists();

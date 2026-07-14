@@ -1,13 +1,15 @@
 package components;
 
 import static com.codeborne.selenide.Condition.visible;
+
+import com.codeborne.selenide.SelenideElement;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
 * Реализует функционал взаимодействия с фильтрами
 * */
-public class FilterComponent extends BasePageComponent {
+public class FilterComponent extends BaseComponent {
     private static final Logger logger = LogManager.getLogger(FilterComponent.class);
     private static final String XPATH = "//div[contains(@class, '%s')]";
 
@@ -29,7 +31,7 @@ public class FilterComponent extends BasePageComponent {
     }
 
     /**
-     * Создает чекбокс по CSS классу
+     * Создает FilterComponent по CSS классу
      * */
     public static FilterComponent byClass(String className) {
         return new FilterComponent(XPATH, className);
@@ -42,16 +44,15 @@ public class FilterComponent extends BasePageComponent {
         logger.info("Применение фильтра по чекбоксу: {} = {}", checkBoxType, value);
 
         if (!checkBoxType.equals("difficulty") && !checkBoxType.equals("language") && !checkBoxType.equals("type")) {
-            logger.warn("Неизвестный тип фильтра: {}", checkBoxType);
+            logger.error("Неизвестный тип фильтра: {}", checkBoxType);
             return;
         }
 
-        CheckBoxFilterElement usingCheckBox = checkBoxType.equals("difficulty") ? difficultyFilter : checkBoxType.equals("language") ? languageFilter : typeFilter;
+        CheckBoxFilterElement usingCheckBox = checkBoxType.equals("difficulty") ? difficultyFilter :
+                checkBoxType.equals("language") ? languageFilter : typeFilter;
 
-    // 1. Сначала скроллим к блоку фильтра и ждем его видимости
         usingCheckBox.getElement().scrollTo().shouldBe(visible);
     
-    // 2. Затем кликаем по конкретному чекбоксу (используем метод .click() из нашего интерфейса, так как там есть логгер)
         usingCheckBox.getCheckBoxByValue(value).click();
 
         logger.info("Фильтр {} = {} применен", checkBoxType, value);
@@ -76,22 +77,13 @@ public class FilterComponent extends BasePageComponent {
     }
 
     /**
-     * Фильтр по бесплатным курсам
-     * */
-    public void filterOnlyFree() {
-        logger.info("Применение фильтра 'Бесплатно'");
-        priceFilter.clickFree();
-        logger.info("Фильтр 'Бесплатно' применен");
-    }
-
-    /**
      * Фильтрация с помощью тумблера выбранного типа
      * */
     public void filterByToggler(String togglerType) {
         logger.info("Применение тумблера: {}", togglerType);
 
         if (!togglerType.equals("discount") && !togglerType.equals("certificate")) {
-            logger.warn("Неизвестный тип тумблера: {}", togglerType);
+            logger.error("Неизвестный тип тумблера: {}", togglerType);
             return;
         }
 
@@ -105,9 +97,20 @@ public class FilterComponent extends BasePageComponent {
         }
     }
 
+    /**
+     * Проверяет, что чекбокс выбран (фильтр по данному чекбоксу активен)
+     * */
     public boolean isCheckBoxSelected(String checkBoxType, String value) {
-        CheckBoxFilterElement filter = checkBoxType.equals("difficulty") ? difficultyFilter : checkBoxType.equals("language") ? languageFilter : typeFilter;
-        return filter.getCheckBoxByValue(value).getElement().$x(".//input").isSelected();
-    }
+        if (!checkBoxType.equals("difficulty") && !checkBoxType.equals("language") && !checkBoxType.equals("type")) {
+            logger.error("Неизвестный тип чекбокса: {}", checkBoxType);
+            return false;
+        }
 
+        CheckBoxFilterElement filter = checkBoxType.equals("difficulty") ? difficultyFilter :
+                checkBoxType.equals("language") ? languageFilter : typeFilter;
+
+        SelenideElement checkBoxInput = filter.getCheckBoxByValue(value).getElement().$x(".//input");
+
+        return checkBoxInput.isSelected();
+    }
 }

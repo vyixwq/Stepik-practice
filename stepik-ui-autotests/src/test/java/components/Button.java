@@ -7,7 +7,7 @@ import org.apache.logging.log4j.Logger;
 /**
  * Реализует функционал работы с кнопками
  * */
-public class Button extends BasePageComponent implements ClickableComponent {
+public class Button extends BaseComponent implements ClickableComponent {
     private static final Logger logger = LogManager.getLogger(Button.class);
 
     private static final String XPATH = "//button[contains(., '%s')]";

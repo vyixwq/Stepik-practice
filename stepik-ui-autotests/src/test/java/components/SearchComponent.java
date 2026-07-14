@@ -7,7 +7,7 @@ import org.apache.logging.log4j.Logger;
 * Составной элемент страницы, состоящий из строки и кнопки поиска
 * */
 
-public class SearchComponent extends BasePageComponent {
+public class SearchComponent extends BaseComponent {
     private static final String XPATH = "//div[@class='%s']";
     private static final Logger logger = LogManager.getLogger(SearchComponent.class);
 

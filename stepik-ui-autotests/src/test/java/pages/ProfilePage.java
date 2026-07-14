@@ -27,7 +27,7 @@ public class ProfilePage extends BasePage<ProfilePage> {
 
     public void openReviews() {
         logger.info("Открытие вкладки 'Отзывы'");
-        reviewsTab.shouldBe(Condition.visible, Duration.ofSeconds(10)).click();
-        reviewsHeader.shouldBe(Condition.visible, Duration.ofSeconds(10));
+        reviewsTab.shouldBe(Condition.visible, Duration.ofSeconds(WAIT_SECONDS)).click();
+        reviewsHeader.shouldBe(Condition.visible, Duration.ofSeconds(WAIT_SECONDS));
     }
 }

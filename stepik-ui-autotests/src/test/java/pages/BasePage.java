@@ -13,8 +13,8 @@ import org.apache.logging.log4j.Logger;
  */
 
 public abstract class BasePage<T extends BasePage<T>> {
-
     protected static final Logger logger = LogManager.getLogger(BasePage.class);
+    protected static final int WAIT_SECONDS = 20;
 
     protected final SelenideElement basePage;
     protected final Class<T> pageClass;

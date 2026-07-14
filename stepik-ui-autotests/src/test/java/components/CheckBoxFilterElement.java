@@ -12,7 +12,7 @@ import static com.codeborne.selenide.Selenide.$$x;
 /**
 * Реализует фильтрацию с помощью чекбоксов
 * */
-public class CheckBoxFilterElement extends BasePageComponent {
+public class CheckBoxFilterElement extends BaseComponent {
     private static final Logger logger = LogManager.getLogger(CheckBoxFilterElement.class);
 
     private static final String XPATH = "//div[@data-name='%s']";
@@ -45,13 +45,14 @@ public class CheckBoxFilterElement extends BasePageComponent {
                     anyMatch(
                             String.format("CheckBox = %s", value),
                             checkBox -> value.equals(checkBox.getAttribute("data-qa-value"))
-                    ), Duration.ofSeconds(30));
+                    ), Duration.ofSeconds(WAIT_SECONDS));
 
             logger.info("Чекбокс со значением '{}' найден в фильтре '{}'", value, checkBoxType);
         }
         catch(Exception e) {
-            logger.warn("Ошибка: Нет чекбокса с таким значением либо он не успел прогрузиться");
+            logger.error("Ошибка получения чекбокса по значению: {}", e.getMessage());
         }
+
         return CheckBox.byValue(value);
     }
 }
