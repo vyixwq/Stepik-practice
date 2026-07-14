@@ -13,6 +13,12 @@ public class FilterTests extends BaseTest {
 
     private static final Logger logger = LogManager.getLogger(FilterTests.class);
 
+    private static final String MIN_PRICE_VAL = "5000";
+    private static final String MAX_PRICE_VAL = "7000";
+    private static final long SLEEP_TIMEOUT = 2000;
+    private static final int PROMO_SEARCH_LIMIT = 20;
+    private static final int FIRST_ITEM = 0;
+
     @Test
     @DisplayName("2. Поиск с фильтрами")
     void testSearchWithFilters() {
@@ -45,9 +51,9 @@ public class FilterTests extends BaseTest {
 
         SearchResultsPage resultsPage = homePage.searchFor("Java");
 
-        resultsPage.applyMinPriceFilter("5000");
+        resultsPage.applyMinPriceFilter(MIN_PRICE_VAL);
 
-        resultsPage.applyMaxPriceFilter("7000");
+        resultsPage.applyMaxPriceFilter(MAX_PRICE_VAL);
 
         logger.info("Проверка отображения результатов в ценовом диапазоне");
         String firstTitle = resultsPage.getFirstCourseTitle();
@@ -132,7 +138,7 @@ public class FilterTests extends BaseTest {
         logger.info("=== ТЕСТ 7 УСПЕШНО ЗАВЕРШЕН ===\n");
     }
 
-        @Test
+    @Test
     @DisplayName("9. Фильтрация акционных курсов")
     void testFilteringPromoCourses() {
         logger.info("=== ТЕСТ 9: Фильтрация акционных курсов ===");
@@ -144,12 +150,12 @@ public class FilterTests extends BaseTest {
         resultsPage.applyTogglerFilter("discount");
 
         logger.info("Ожидание обновления результатов фильтрации...");
-        com.codeborne.selenide.Selenide.sleep(2000);
+        com.codeborne.selenide.Selenide.sleep(SLEEP_TIMEOUT);
 
         logger.info("Проверка наличия старой цены на карточках результатов");
 
         boolean foundPromo = false;
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < PROMO_SEARCH_LIMIT; i++) {
             CourseCardItem card = resultsPage.getCourseCard(i);
             if (card != null && card.hasOldPrice()) {
                 foundPromo = true;
@@ -174,7 +180,7 @@ public class FilterTests extends BaseTest {
 
         resultsPage.applyCheckBoxFilter("difficulty", "normal");
 
-        resultsPage.getCourseCard(0).addToWishlist();
+        resultsPage.getCourseCard(FIRST_ITEM).addToWishlist();
 
         logger.info("Проверка, что курс добавлен в избранное");
         Assertions.assertTrue(
