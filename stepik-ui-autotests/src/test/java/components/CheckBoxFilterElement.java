@@ -18,11 +18,13 @@ public class CheckBoxFilterElement extends BaseComponent {
     private static final String XPATH = "//div[@data-name='%s']";
 
     private final String checkBoxType;
+    private final ElementsCollection checkBoxes;
 
     protected CheckBoxFilterElement(String xpath, String attribute) {
         super(xpath, attribute);
         checkBoxType = attribute;
         logger.info("Создан CheckBoxFilterElement: {}", attribute);
+        checkBoxes = $$x(String.format(".//label[@data-qa-field='%s']", checkBoxType));
     }
 
     /**
@@ -40,7 +42,6 @@ public class CheckBoxFilterElement extends BaseComponent {
         logger.info("Поиск чекбокса со значением: '{}' в фильтре: {}", value, checkBoxType);
 
         try {
-            ElementsCollection checkBoxes = $$x(String.format(".//label[@data-qa-field='%s']", checkBoxType));
             checkBoxes.shouldHave(
                     anyMatch(
                             String.format("CheckBox = %s", value),

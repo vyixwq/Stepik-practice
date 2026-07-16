@@ -19,11 +19,17 @@ public class CourseCardItem extends BaseComponent {
 
     private final CourseCardText title;
     private final Button favoriteButton;
+    private final SelenideElement firstAuthor;
+    private final SelenideElement oldPrice;
+    private final SelenideElement favoriteFilledIcon;
 
     public CourseCardItem(SelenideElement element) {
         super(element);
-        title = new CourseCardText(baseElement.$x(".//a[contains(@class,'course-card__title')]"));
-        favoriteButton = new Button(baseElement.$x(".//button[contains(@class, 'course-card__bookmark')]"));
+        this.title = new CourseCardText(baseElement.$x(".//a[contains(@class,'course-card__title')]"));
+        this.favoriteButton = new Button(baseElement.$x(".//button[contains(@class, 'course-card__bookmark')]"));
+        this.firstAuthor = baseElement.$x(".//a[contains(@class,'course-card__author')]");
+        this.oldPrice = baseElement.$x(".//span[contains(@class, 'only-price-regular')]");
+        this.favoriteFilledIcon = favoriteButton.getElement().$x(".//*[contains(@class, 'favorite-filled')]");
     }
 
     /**
@@ -32,8 +38,6 @@ public class CourseCardItem extends BaseComponent {
     public void addToWishlist() {
         logger.info("Добавление курса в избранное (JS-клик)");
         favoriteButton.getElement().click(ClickOptions.usingJavaScript());
-        
-        com.codeborne.selenide.Selenide.sleep(1000);
     }
 
     /**
@@ -42,7 +46,6 @@ public class CourseCardItem extends BaseComponent {
     public void clickFirstAuthor() {
         logger.info("Клик по первому автору (JS-клик)");
         try {
-            SelenideElement firstAuthor = baseElement.$x(".//a[contains(@class,'course-card__author')]");
             firstAuthor
                     .shouldBe(visible, Duration.ofSeconds(WAIT_SECONDS))
                     .click(com.codeborne.selenide.ClickOptions.usingJavaScript());
@@ -66,8 +69,6 @@ public class CourseCardItem extends BaseComponent {
      * */
     public boolean hasOldPrice() {
         try {
-            SelenideElement oldPrice = baseElement.$x(".//span[contains(@class, 'only-price-regular')]");
-
             oldPrice.should(Condition.exist, Duration.ofSeconds(WAIT_SECONDS));
             
             logger.info("Старая цена обнаружена на карточке");
@@ -83,10 +84,6 @@ public class CourseCardItem extends BaseComponent {
      * */
     public boolean isFavorite() {
         try {
-            SelenideElement favoriteFilledIcon = favoriteButton
-                    .getElement()
-                    .$x(".//*[contains(@class, 'favorite-filled')]");
-
             favoriteFilledIcon.should(Condition.exist, Duration.ofSeconds(WAIT_SECONDS));
             
             logger.info("Успех: внутри кнопки найдена иконка заполненного сердечка (favorite-filled)");
