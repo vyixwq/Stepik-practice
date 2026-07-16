@@ -17,13 +17,15 @@ public class CoursePage extends BasePage<CoursePage> {
     private static final Logger logger = LogManager.getLogger(CoursePage.class);
 
     private final SelenideElement courseTitle = $x("//h1");
+    private final String title;
 
     public CoursePage() {
         super($x("//h1"), CoursePage.class);
+        title = courseTitle.shouldBe(visible).getText();
+
     }
 
     public String getCourseTitle() {
-        String title = courseTitle.shouldBe(visible).getText();
         logger.info("Заголовок курса: '{}'", title);
         return title;
     }
