@@ -15,7 +15,6 @@ public class FilterTests extends BaseTest {
 
     private static final String MIN_PRICE_VAL = "5000";
     private static final String MAX_PRICE_VAL = "7000";
-    private static final long SLEEP_TIMEOUT = 2000;
     private static final int PROMO_SEARCH_LIMIT = 20;
     private static final int FIRST_ITEM = 0;
 
@@ -148,9 +147,6 @@ public class FilterTests extends BaseTest {
         resultsPage.applyCheckBoxFilter("type", "spec");
 
         resultsPage.applyTogglerFilter("discount");
-
-        logger.info("Ожидание обновления результатов фильтрации...");
-        com.codeborne.selenide.Selenide.sleep(SLEEP_TIMEOUT);
 
         logger.info("Проверка наличия старой цены на карточках результатов");
 
