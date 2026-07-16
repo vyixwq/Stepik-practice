@@ -32,8 +32,6 @@ public class CourseCardItem extends BaseComponent {
     public void addToWishlist() {
         logger.info("Добавление курса в избранное (JS-клик)");
         favoriteButton.getElement().click(ClickOptions.usingJavaScript());
-        
-        com.codeborne.selenide.Selenide.sleep(1000);
     }
 
     /**
