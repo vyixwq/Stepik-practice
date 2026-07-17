@@ -6,6 +6,7 @@ import com.codeborne.selenide.SelenideElement;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import helpers.ComponentsConstants;
 /**
 * Реализует функционал взаимодействия с фильтрами
 * */
@@ -27,13 +28,13 @@ public class FilterComponent extends BaseComponent {
 
     protected FilterComponent(String xpath, String attribute) {
         super(xpath, attribute);
-        logger.info("Создан FilterComponent: {}", attribute);
     }
 
     /**
      * Создает FilterComponent по CSS классу
      * */
     public static FilterComponent byClass(String className) {
+        logger.info(ComponentsConstants.BY_CLASS_LOG_MSG, FilterComponent.class.getSimpleName(), className);
         return new FilterComponent(XPATH, className);
     }
 
@@ -41,10 +42,10 @@ public class FilterComponent extends BaseComponent {
      * Фильтрация с помощью чекбокса выбранного типа по выбранному значению
      * */
     public void filterByCheckBox(String checkBoxType, String value) {
-        logger.info("Применение фильтра по чекбоксу: {} = {}", checkBoxType, value);
+        logger.info(ComponentsConstants.FILTER_BY_CHECKBOX_LOG_MSG, checkBoxType, value);
 
         if (!checkBoxType.equals("difficulty") && !checkBoxType.equals("language") && !checkBoxType.equals("type")) {
-            logger.error("Неизвестный тип фильтра: {}", checkBoxType);
+            logger.error(ComponentsConstants.FILTER_BY_CHECKBOX_ERR_MSG, checkBoxType);
             return;
         }
 
@@ -52,38 +53,30 @@ public class FilterComponent extends BaseComponent {
                 checkBoxType.equals("language") ? languageFilter : typeFilter;
 
         usingCheckBox.getElement().scrollTo().shouldBe(visible);
-    
-        usingCheckBox.getCheckBoxByValue(value).click();
 
-        logger.info("Фильтр {} = {} применен", checkBoxType, value);
+        usingCheckBox.getCheckBoxByValue(value).click();
     }
 
     /**
      * Фильтрация по наименьшей возможной цене
      * */
     public void filterByMinPrice(String minPrice) {
-        logger.info("Применение ценового фильтра: от {}", minPrice);
         priceFilter.getminValueInput().fill(minPrice);
-        logger.info("Фильтр 'Цена от: {}' применен", minPrice);
     }
 
     /**
      * Фильтрация по наибольшей возможной цене
      * */
     public void filterByMaxPrice(String maxPrice) {
-        logger.info("Применение ценового фильтра: до {}", maxPrice);
         priceFilter.getmaxValueInput().fill(maxPrice);
-        logger.info("Фильтр 'Цена до {}' применен", maxPrice);
     }
 
     /**
      * Фильтрация с помощью тумблера выбранного типа
      * */
     public void filterByToggler(String togglerType) {
-        logger.info("Применение тумблера: {}", togglerType);
-
         if (!togglerType.equals("discount") && !togglerType.equals("certificate")) {
-            logger.error("Неизвестный тип тумблера: {}", togglerType);
+            logger.error(ComponentsConstants.UNKNOWN_TOGGLER_ERR_MSG, togglerType);
             return;
         }
 
@@ -91,9 +84,9 @@ public class FilterComponent extends BaseComponent {
 
         if (!usingToggler.isActive()) {
             usingToggler.toggle();
-            logger.info("Тумблер {} включен", togglerType);
+            logger.info(ComponentsConstants.FILTER_BY_TOGGLER_LOG_MSG, togglerType);
         } else {
-            logger.info("Тумблер {} уже активен", togglerType);
+            logger.info(ComponentsConstants.TOGGLER_HAS_ALREADY__ACTIVE_LOG_MSG, togglerType);
         }
     }
 
@@ -102,7 +95,7 @@ public class FilterComponent extends BaseComponent {
      * */
     public boolean isCheckBoxSelected(String checkBoxType, String value) {
         if (!checkBoxType.equals("difficulty") && !checkBoxType.equals("language") && !checkBoxType.equals("type")) {
-            logger.error("Неизвестный тип чекбокса: {}", checkBoxType);
+            logger.error(ComponentsConstants.UNKNOWN_SELECTED_CHECKBOX, checkBoxType);
             return false;
         }
 

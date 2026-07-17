@@ -8,8 +8,11 @@ import components.CourseCardItem;
 import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.WebDriverConditions;
+
 import components.FilterComponent;
 import components.SearchComponent;
+import helpers.PagesConstants;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -27,26 +30,27 @@ public class SearchResultsPage extends BasePage<SearchResultsPage> {
 
     private static final Logger logger = LogManager.getLogger(SearchResultsPage.class);
 
+
     // Кнопка очистки поиска ("крестик")
-    private final Button clearButton = Button.byClass("search-form__reset");
+    private final Button clearButton = Button.byClass(PagesConstants.CLEAR_BUTTON_CLASS);
 
     // Компонент центрального поля поиска
-    private final SearchComponent centralSearch = SearchComponent.byClass("catalog-w__search-form");
+    private final SearchComponent centralSearch = SearchComponent.byClass(PagesConstants.SEARCH_CLASS);
 
     // Компонент всех фильтров
-    private final FilterComponent filter = FilterComponent.byClass("search-form-filters catalog-w__filters");
+    private final FilterComponent filter = FilterComponent.byClass(PagesConstants.FILTER_CLASS);
 
     // Кнопка "Далее" для пагинации
-    private final Button nextButton = Button.byName("Далее");
+    private final Button nextButton = Button.byName(PagesConstants.NEXT_BUTTON_NAME);
 
     // Кнопка закрытия баннера cookie
-    private final SelenideElement cookieButton = $x("//button[contains(text(), 'Хорошо')]");
+    private final SelenideElement cookieButton = $x(PagesConstants.COOKIE_BUTTON_XPATH);
 
     // Блок пагинации
-    private final SelenideElement paginationBlock = $(".catalog__paging");
+    private final SelenideElement paginationBlock = $(PagesConstants.PAGINATION_BLOCK_CSS_SELECTOR);
 
     public SearchResultsPage() {
-        super($x("//h1[text()='Поиск']"), SearchResultsPage.class);
+        super($x(PagesConstants.RESULTS_PAGE_XPATH), SearchResultsPage.class);
     }
 
     /**
@@ -55,7 +59,6 @@ public class SearchResultsPage extends BasePage<SearchResultsPage> {
     public void closeCookieBanner() {
         if (cookieButton.exists()) {
             cookieButton.click();
-            logger.info("Баннер cookie закрыт");
         }
     }
 
@@ -64,11 +67,11 @@ public class SearchResultsPage extends BasePage<SearchResultsPage> {
      */
     public CourseCardItem getCourseCard(int index) {
         try {
-            ElementsCollection cards = $$(".course-card");
+            ElementsCollection cards = $$(PagesConstants.COURSE_CARD_CSS_SELECTOR);
             cards.shouldHave(CollectionCondition.sizeGreaterThan(index), Duration.ofSeconds(WAIT_SECONDS));
             return new CourseCardItem(cards.get(index));
         } catch (AssertionError e) {
-            logger.warn("Карточка курса с индексом {} не найдена: {}", index, e.getMessage());
+            logger.error(PagesConstants.GET_COURSE_CARD_ERR_MSG, index, e.getMessage());
             return null;
         }
     }
@@ -86,11 +89,11 @@ public class SearchResultsPage extends BasePage<SearchResultsPage> {
             nextButton.getElement().shouldBe(visible, Duration.ofSeconds(WAIT_SECONDS));
             nextButton.click();
 
-            ElementsCollection cards = $$(".course-card");
+            ElementsCollection cards = $$(PagesConstants.COURSE_CARD_CSS_SELECTOR);
 
             cards.shouldHave(CollectionCondition.sizeGreaterThan(0), Duration.ofSeconds(WAIT_SECONDS));
         } catch (AssertionError e) {
-            logger.error("Ошибка при переходе на следующую страницу: {}", e.getMessage());
+            logger.error(PagesConstants.CLICK_NEXT_ERR_MSG, e.getMessage());
         }
     }
 
@@ -98,12 +101,12 @@ public class SearchResultsPage extends BasePage<SearchResultsPage> {
      * Открывает первый курс из результатов поиска.
      */
     public CoursePage openFirstCourse() {
-        logger.info("Открытие первого курса");
+        logger.info(PagesConstants.OPEN_FIRST_COURSE_LOG_MSG);
         try {
             getCourseCard(0).getTitle().click();
             return page(CoursePage.class);
         } catch (AssertionError e) {
-            logger.error("Не удалось открыть первый курс: {}", e.getMessage());
+            logger.error(PagesConstants.OPEN_FIRST_COURSE_ERR_MSG, e.getMessage());
             return null;
         }
     }
@@ -119,7 +122,7 @@ public class SearchResultsPage extends BasePage<SearchResultsPage> {
      * Применяет фильтр по минимальной цене.
      */
     public void applyMinPriceFilter(String minValue) {
-        logger.info("Применение минимальной цены: {}", minValue);
+        logger.info(PagesConstants.APPLY_MIN_PRICE_FILTER_LOG_MSG, minValue);
         filter.filterByMinPrice(minValue);
     }
 
@@ -127,7 +130,7 @@ public class SearchResultsPage extends BasePage<SearchResultsPage> {
      * Применяет фильтр по максимальной цене.
      */
     public void applyMaxPriceFilter(String maxValue) {
-        logger.info("Применение максимальной цены: {}", maxValue);
+        logger.info(PagesConstants.APPLY_MAX_PRICE_FILTER_LOG_MSG, maxValue);
         filter.filterByMaxPrice(maxValue);
     }
 
@@ -142,7 +145,7 @@ public class SearchResultsPage extends BasePage<SearchResultsPage> {
             );
             return getCourseCard(0).getTitle().getText();
         } catch (AssertionError e) {
-            logger.error("Не удалось получить заголовок первого курса: {}", e.getMessage());
+            logger.error(PagesConstants.GET_FIRST_TITLE_ERR_MSG, e.getMessage());
             return "";
         }
     }
@@ -158,7 +161,7 @@ public class SearchResultsPage extends BasePage<SearchResultsPage> {
      * Выполняет новый поиск на странице результатов.
      */
     public void searchAgain(String text) {
-        logger.info("Повторный поиск по запросу: '{}'", text);
+        logger.info(PagesConstants.SEARCH_AGAIN_LOG_MSG, text);
         centralSearch.search(text);
     }
 
@@ -166,7 +169,7 @@ public class SearchResultsPage extends BasePage<SearchResultsPage> {
      * Применяет тумблер-фильтр.
      */
     public void applyTogglerFilter(String togglerType) {
-        logger.info("Применение тумблера: {}", togglerType);
+        logger.info(PagesConstants.APPLY_TOGGLE_FILTER_LOG_MSG, togglerType);
         filter.filterByToggler(togglerType);
     }
 
@@ -182,12 +185,12 @@ public class SearchResultsPage extends BasePage<SearchResultsPage> {
      */
     public boolean isNothingFoundMessageVisible() {
         try {
-            SelenideElement bodyOfPage = $x("//body");
-            bodyOfPage.shouldHave(Condition.text("ничего не найдено"), Duration.ofSeconds(WAIT_SECONDS));
+            SelenideElement bodyOfPage = $x(PagesConstants.PAGE_BODY_XPATH);
+            bodyOfPage.shouldHave(Condition.text(PagesConstants.NOTHING_RESULTS_STRING), Duration.ofSeconds(WAIT_SECONDS));
             return true;
         } catch (Throwable e) {
-            boolean resetLinkVisible = $x("//*[contains(text(), 'Сбросить фильтры')]").exists();
-            logger.error("Текст не найден. Видна ли кнопка 'Сбросить фильтры': {}", resetLinkVisible);
+            boolean resetLinkVisible = $x(PagesConstants.RESET_BUTTON_XPATH).exists();
+            logger.error(PagesConstants.IS_NOTHING_FOUND_ERR_MSG, resetLinkVisible);
             return resetLinkVisible;
         }
     }

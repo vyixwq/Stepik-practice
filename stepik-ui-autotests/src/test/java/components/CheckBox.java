@@ -12,7 +12,6 @@ public class CheckBox extends BaseComponent implements ClickableComponent {
 
     protected CheckBox(String xpath, String attribute) {
         super(xpath, attribute);
-        logger.info("Создан чекбокс со значением атрибута: {}", attribute);
     }
 
     /**

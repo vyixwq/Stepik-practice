@@ -4,6 +4,8 @@ import com.codeborne.selenide.SelenideElement;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import helpers.ComponentsConstants;
+
 /**
  * Реализует функционал работы с кнопками
  * */
@@ -15,7 +17,6 @@ public class Button extends BaseComponent implements ClickableComponent {
 
     protected Button(String xpath, String attribute) {
         super(xpath, attribute);
-        logger.info("Создана кнопка со значением атрибута: {}", attribute);
     }
 
     protected Button(SelenideElement element) { super(element); }
@@ -24,6 +25,7 @@ public class Button extends BaseComponent implements ClickableComponent {
     * Создает кнопку по названию
     * */
     public static Button byName(String name) {
+        logger.info(ComponentsConstants.BY_NAME_LOG_MSG, Button.class.getSimpleName(), name);
         return new Button(XPATH, name);
     }
 
@@ -31,6 +33,7 @@ public class Button extends BaseComponent implements ClickableComponent {
     * Создает кнопку по CSS классу
     * */
     public static Button byClass(String className) {
+        logger.info(ComponentsConstants.BY_CLASS_LOG_MSG, Button.class.getSimpleName(), className);
         return new Button(String.format(CLASS_XPATH, className), className);
     }
 }

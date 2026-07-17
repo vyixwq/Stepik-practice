@@ -4,6 +4,8 @@ import components.SearchComponent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import helpers.PagesConstants;
+
 import static com.codeborne.selenide.Selenide.$x;
 import static com.codeborne.selenide.Selenide.open;
 
@@ -16,21 +18,20 @@ public class HomePage extends BasePage<HomePage> {
 
     private static final Logger logger = LogManager.getLogger(HomePage.class);
 
-    // Блок поиска на главной странице
-    private final SearchComponent search = SearchComponent.byClass("catalog__search-form");
+    private final SearchComponent search = SearchComponent.byClass(PagesConstants.HOME_SEARCH_COMPONENT_CLASS);
 
     public HomePage() {
-        super($x("//h2[@class='catalog-block__title']"), HomePage.class);
+        super($x(PagesConstants.HOME_PAGE_XPATH), HomePage.class);
     }
 
     public HomePage openPage() {
-        logger.info("Открытие главной страницы Stepik");
-        open("https://stepik.org/catalog");
+        logger.info(PagesConstants.OPEN_HOMEPAGE_LOG_MESSAGE);
+        open(PagesConstants.HOME_PAGE_LINK);
         return this;
     }
 
     public SearchResultsPage searchFor(String text) {
-        logger.info("Поиск по запросу: '{}'", text);
+    logger.info(PagesConstants.DO_SEARCH_LOG_MESSAGE, text);
         search.search(text);
         return page(SearchResultsPage.class);
     }

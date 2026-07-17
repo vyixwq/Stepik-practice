@@ -9,52 +9,13 @@ import pages.SearchResultsPage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import helpers.TestsConstants;
+
+import static helpers.TestsConstants.*;
+
 public class FilterTests extends BaseTest {
 
     private static final Logger logger = LogManager.getLogger(FilterTests.class);
-
-    private static final String MIN_PRICE_VAL = "5000";
-    private static final String MAX_PRICE_VAL = "7000";
-    private static final int PROMO_SEARCH_LIMIT = 20;
-    private static final int FIRST_ITEM = 0;
-
-    private static final String SEARCH_QUERY_LINUX = "Linux";
-    private static final String SEARCH_QUERY_JAVA = "Java";
-    private static final String SEARCH_QUERY_QA_AUTO = "QA Automation";
-    private static final String SEARCH_QUERY_ML = "Machine Learning";
-    private static final String SEARCH_QUERY_DS = "Data Science";
-    private static final String SEARCH_QUERY_INVALID = "zxcvbnm123";
-    private static final String SEARCH_QUERY_BACKEND = "Backend";
-    private static final String SEARCH_QUERY_WEB_DESIGN = "Web Design";
-
-    private static final String FILTER_LANGUAGE = "language";
-    private static final String FILTER_TYPE = "type";
-    private static final String FILTER_DIFFICULTY = "difficulty";
-    private static final String TOGGLER_CERTIFICATE = "certificate";
-    private static final String TOGGLER_DISCOUNT = "discount";
-
-    private static final String VAL_LANG_EN = "en";
-    private static final String VAL_LANG_RU = "ru";
-    private static final String VAL_TYPE_SPEC = "spec";
-    private static final String VAL_DIFF_EASY = "easy";
-    private static final String VAL_DIFF_NORMAL = "normal";
-    private static final String VAL_DIFF_HARD = "hard";
-
-    private static final String EXPECTED_TXT_LINUX = "linux";
-    private static final String EXPECTED_TXT_JAVA = "java";
-    private static final String EXPECTED_TXT_QA = "qa";
-    private static final String EXPECTED_TXT_AUTO = "automation";
-    private static final String EXPECTED_TXT_DATA = "data";
-    private static final String EXPECTED_TXT_SCIENCE = "science";
-
-    private static final String ASSERT_MSG_LINUX = "Первый найденный курс '%s' должен содержать ключевое слово 'Linux'";
-    private static final String ASSERT_MSG_JAVA = "Первый найденный курс в ценовом диапазоне '%s' должен соответствовать запросу 'Java'";
-    private static final String ASSERT_MSG_QA_AUTO = "Найденный курс '%s' должен соответствовать тематике 'QA Automation'";
-    private static final String ASSERT_MSG_DS_TITLE = "Заголовок должен содержать 'Data Science'";
-    private static final String ASSERT_MSG_LANG_ACTIVE = "Фильтр 'Английский' должен остаться активным";
-    private static final String ASSERT_MSG_NOTHING_FOUND = "На странице должно быть сообщение 'ничего не найдено'";
-    private static final String ASSERT_MSG_PROMO = "В результатах фильтрации должен быть хотя бы один курс с отображаемой старой ценой";
-    private static final String ASSERT_MSG_FAVORITE = "Иконка сердечка должна изменить состояние на активное";
 
     @Test
     @DisplayName("2. Поиск с фильтрами")
@@ -63,7 +24,7 @@ public class FilterTests extends BaseTest {
 
         HomePage homePage = new HomePage().openPage();
 
-        SearchResultsPage resultsPage = homePage.searchFor(SEARCH_QUERY_LINUX);
+        SearchResultsPage resultsPage = homePage.searchFor(TestsConstants.SEARCH_QUERY_LINUX);
 
         resultsPage.applyCheckBoxFilter(FILTER_LANGUAGE, VAL_LANG_EN);
 

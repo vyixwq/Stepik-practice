@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import java.time.Duration;
 import static com.codeborne.selenide.Condition.visible;
 
+import helpers.ComponentsConstants;
 /**
 * Интерфейс для кликабельных объектов с соответствующим методом click
 * */
@@ -21,13 +22,12 @@ public interface ClickableComponent {
      * Метод для клика по объекту
      * */
     default void click() {
-        logger.info("Клик по элементу");
+        logger.info(ComponentsConstants.CLICK_LOG_MSG);
         try {
             getElement().shouldBe(visible, Duration.ofSeconds(WAIT_SECONDS)).click();
-            logger.info("Клик выполнен");
         }
         catch (ElementNotFound e) {
-            logger.error("Ошибка: не удалось выполнить клик по элементу: {}", e.getMessage());
+            logger.error(ComponentsConstants.CLICK_ERR_MSG, e.getMessage());
         }
     }
 }

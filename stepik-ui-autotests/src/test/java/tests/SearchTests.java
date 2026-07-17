@@ -13,23 +13,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import java.time.Duration;
 
+import static helpers.TestsConstants.*;
+
 public class SearchTests extends BaseTest {
 
     private static final Logger logger = LogManager.getLogger(SearchTests.class);
-
-    private static final int TARGET_WINDOW_INDEX = 1;
-    private static final int DEFAULT_WAIT_TIME_SEC = 5;
-    private static final int FIRST_ITEM = 0;
-
-    private static final String SEARCH_QUERY_PYTHON = "Python";
-    private static final String SEARCH_QUERY_CPP = "C++";
-    private static final String SEARCH_QUERY_AUTHOR = "Оксана Еськова";
-
-    private static final String EXPECTED_TXT_PYTHON = "python";
-
-    private static final String ASSERT_MSG_PYTHON_TITLE = "Заголовок курса '%s' должен содержать ключевое слово 'Python'";
-    private static final String ASSERT_MSG_SEARCH_EMPTY = "Поле поиска должно быть пустым после нажатия на крестик!";
-    private static final String ASSERT_MSG_CATALOG_NOT_EMPTY = "Каталог общего поиска должен успешно отображаться после сброса параметров";
 
     @Test
     @DisplayName("1. Текстовый поиск и навигация по страницам")

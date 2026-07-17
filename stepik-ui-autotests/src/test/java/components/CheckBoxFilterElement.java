@@ -9,6 +9,7 @@ import java.time.Duration;
 import static com.codeborne.selenide.CollectionCondition.anyMatch;
 import static com.codeborne.selenide.Selenide.$$x;
 
+import helpers.ComponentsConstants;
 /**
 * Реализует фильтрацию с помощью чекбоксов
 * */
@@ -16,6 +17,7 @@ public class CheckBoxFilterElement extends BaseComponent {
     private static final Logger logger = LogManager.getLogger(CheckBoxFilterElement.class);
 
     private static final String XPATH = "//div[@data-name='%s']";
+    private static final String TYPE_XPATH = ".//label[@data-qa-field='%s']";
 
     private final String checkBoxType;
     private final ElementsCollection checkBoxes;
@@ -23,15 +25,14 @@ public class CheckBoxFilterElement extends BaseComponent {
     protected CheckBoxFilterElement(String xpath, String attribute) {
         super(xpath, attribute);
         checkBoxType = attribute;
-        logger.info("Создан CheckBoxFilterElement: {}", attribute);
-        checkBoxes = $$x(String.format(".//label[@data-qa-field='%s']", checkBoxType));
+        checkBoxes = $$x(String.format(TYPE_XPATH, checkBoxType));
     }
 
     /**
      * Создает фильтр по имени чекбокса
      * */
     public static CheckBoxFilterElement byName(String name) {
-        logger.info("Создание CheckBoxFilterElement по имени: {}", name);
+        logger.info(ComponentsConstants.BY_NAME_LOG_MSG, CheckBoxFilterElement.class.getSimpleName(), name);
         return new CheckBoxFilterElement(XPATH, name);
     }
 
@@ -39,7 +40,7 @@ public class CheckBoxFilterElement extends BaseComponent {
      * Метод получения чекбокса по значению
      * */
     public CheckBox getCheckBoxByValue(String value) {
-        logger.info("Поиск чекбокса со значением: '{}' в фильтре: {}", value, checkBoxType);
+        logger.info(ComponentsConstants.GET_CHECKBOX_BY_VALUE_LOG_MSG, value, checkBoxType);
 
         try {
             checkBoxes.shouldHave(
@@ -48,10 +49,9 @@ public class CheckBoxFilterElement extends BaseComponent {
                             checkBox -> value.equals(checkBox.getAttribute("data-qa-value"))
                     ), Duration.ofSeconds(WAIT_SECONDS));
 
-            logger.info("Чекбокс со значением '{}' найден в фильтре '{}'", value, checkBoxType);
         }
         catch(Exception e) {
-            logger.error("Ошибка получения чекбокса по значению: {}", e.getMessage());
+            logger.error(ComponentsConstants.GET_CHECKBOX_BY_VALUE_ERR_MSG, e.getMessage());
         }
 
         return CheckBox.byValue(value);

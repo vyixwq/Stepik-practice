@@ -1,5 +1,6 @@
 package components;
 
+import helpers.ComponentsConstants;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -13,13 +14,13 @@ public class PriceFilterElement extends BaseComponent {
 
     protected PriceFilterElement(String xpath, String attribute) {
         super(xpath, attribute);
-        logger.info("Создан PriceFilterElement: {}", attribute);
     }
 
     /**
      * Создает ценовой фильтр по его имени
      * */
     public static PriceFilterElement byName(String name) {
+        logger.info(ComponentsConstants.BY_NAME_LOG_MSG, PriceFilterElement.class.getSimpleName(), name);
         return new PriceFilterElement(XPATH, name);
     }
 

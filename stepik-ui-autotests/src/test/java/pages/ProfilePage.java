@@ -5,6 +5,8 @@ import com.codeborne.selenide.SelenideElement;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import helpers.PagesConstants;
+
 import java.time.Duration;
 
 import static com.codeborne.selenide.Selenide.$x;
@@ -18,15 +20,15 @@ public class ProfilePage extends BasePage<ProfilePage> {
 
     private static final Logger logger = LogManager.getLogger(ProfilePage.class);
 
-    private final SelenideElement reviewsTab = $x("//a[contains(@href, '/reviews')]");
-    public final SelenideElement reviewsHeader = $x("//h2[contains(@class, 'course-review-sort__title')]");
+    private final SelenideElement reviewsTab = $x(PagesConstants.REVIEWS_TAB_XPATH);
+    public final SelenideElement reviewsHeader = $x(PagesConstants.REVIEWS_HEADER_XPATH);
 
     public ProfilePage() {
-        super($x("//div[contains(@class, 'user-profile')]"), ProfilePage.class);
+        super($x(PagesConstants.PROFILE_PAGE_XPATH), ProfilePage.class);
     }
 
     public void openReviews() {
-        logger.info("Открытие вкладки 'Отзывы'");
+        logger.info(PagesConstants.OPEN_REVIEWS_LOG_MESSAGE);
         reviewsTab.shouldBe(Condition.visible, Duration.ofSeconds(WAIT_SECONDS)).click();
         reviewsHeader.shouldBe(Condition.visible, Duration.ofSeconds(WAIT_SECONDS));
     }

@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.time.Duration;
 
+import helpers.ComponentsConstants;
 /**
  * Элемент списка результатов - реализует функционал работы с
  * названием и авторами курса, а также добавления курса в 'Избранное'
@@ -25,18 +26,18 @@ public class CourseCardItem extends BaseComponent {
 
     public CourseCardItem(SelenideElement element) {
         super(element);
-        this.title = new CourseCardText(baseElement.$x(".//a[contains(@class,'course-card__title')]"));
-        this.favoriteButton = new Button(baseElement.$x(".//button[contains(@class, 'course-card__bookmark')]"));
-        this.firstAuthor = baseElement.$x(".//a[contains(@class,'course-card__author')]");
-        this.oldPrice = baseElement.$x(".//span[contains(@class, 'only-price-regular')]");
-        this.favoriteFilledIcon = favoriteButton.getElement().$x(".//*[contains(@class, 'favorite-filled')]");
+        this.title = new CourseCardText(baseElement.$x(ComponentsConstants.TITLE_XPATH));
+        this.favoriteButton = new Button(baseElement.$x(ComponentsConstants.FAVORITE_BUTTON_XPATH));
+        this.firstAuthor = baseElement.$x(ComponentsConstants.FIRST_AUTHOR_XPATH);
+        this.oldPrice = baseElement.$x(ComponentsConstants.OLD_PRICE_XPATH);
+        this.favoriteFilledIcon = favoriteButton.getElement().$x(ComponentsConstants.FAVORITE_FILLED_ICON_XPATH);
     }
 
     /**
     * Метод добавления курса в избранное
     * */
     public void addToWishlist() {
-        logger.info("Добавление курса в избранное (JS-клик)");
+        logger.info(ComponentsConstants.ADD_TO_WISHLIST_LOG_MSG);
         favoriteButton.getElement().click(ClickOptions.usingJavaScript());
     }
 
@@ -44,16 +45,14 @@ public class CourseCardItem extends BaseComponent {
     * Метод клика по первому автору
     * */
     public void clickFirstAuthor() {
-        logger.info("Клик по первому автору (JS-клик)");
+        logger.info(ComponentsConstants.FIRST_AUTHOR_CLICK_LOG_MSG);
         try {
             firstAuthor
                     .shouldBe(visible, Duration.ofSeconds(WAIT_SECONDS))
                     .click(com.codeborne.selenide.ClickOptions.usingJavaScript());
-            
-            logger.info("Клик по первому автору выполнен через JS");
         }
         catch(Exception e) {
-            logger.error("Ошибка при клике по автору: {}", e.getMessage());
+            logger.error(ComponentsConstants.FIRST_AUTHOR_CLICK_ERR_MSG, e.getMessage());
         }
     }
 
@@ -70,11 +69,10 @@ public class CourseCardItem extends BaseComponent {
     public boolean hasOldPrice() {
         try {
             oldPrice.should(Condition.exist, Duration.ofSeconds(WAIT_SECONDS));
-            
-            logger.info("Старая цена обнаружена на карточке");
+            logger.info(ComponentsConstants.HAS_OLD_PRICE_LOG_MSG);
             return true;
         } catch (Throwable e) {
-            logger.error("Старая цена НЕ найдена");
+            logger.error(ComponentsConstants.HAS_OLD_PRICE_ERR_MSG);
             return false;
         }
     }
@@ -86,13 +84,10 @@ public class CourseCardItem extends BaseComponent {
         try {
             favoriteFilledIcon.should(Condition.exist, Duration.ofSeconds(WAIT_SECONDS));
             
-            logger.info("Успех: внутри кнопки найдена иконка заполненного сердечка (favorite-filled)");
+            logger.info(ComponentsConstants.COURSE_IN_WISHLIST_LOG_MSG);
             return true;
         } catch (Throwable e) {
-            logger.error(
-                    "Иконка 'favorite-filled' не найдена. Текущий HTML: {}",
-                    favoriteButton.getElement().innerHtml()
-            );
+            logger.error(ComponentsConstants.COURSE_IN_WISHLIST_ERR_MSG);
             return false;
         }
     }

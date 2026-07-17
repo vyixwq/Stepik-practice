@@ -3,6 +3,7 @@ package components;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import helpers.ComponentsConstants;
 /**
  * Реализует функционал работы с полем ввода
  * */
@@ -13,7 +14,6 @@ public class Input extends BaseComponent {
 
     protected Input(String xpath, String attributeValue) {
         super(xpath, attributeValue);
-        logger.info("Создан Input: {}", attributeValue);
     }
 
     /**
@@ -27,18 +27,13 @@ public class Input extends BaseComponent {
     * Метод заполнения поля ввода
     * */
     public void fill(String text) {
-        logger.info("Заполнение поля значением: {}", text);
+        logger.info(ComponentsConstants.FILL_LOG_MSG, text);
         baseElement.clear();
         baseElement.sendKeys(text);
-        logger.info("Поле заполнено");
     }
 
     /*
     * Метод получения текущего значения поля
     * */
-    public String getValue() {
-        String value = baseElement.getValue();
-        logger.info("Текущее значение поля: '{}'", value);
-        return value;
-    }
+    public String getValue() { return baseElement.getValue(); }
 }

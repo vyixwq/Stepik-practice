@@ -4,6 +4,8 @@ import com.codeborne.selenide.SelenideElement;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import helpers.PagesConstants;
+
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$x;
 
@@ -15,18 +17,17 @@ import static com.codeborne.selenide.Selenide.$x;
 public class CoursePage extends BasePage<CoursePage> {
 
     private static final Logger logger = LogManager.getLogger(CoursePage.class);
+    private static final SelenideElement courseTitle = $x(PagesConstants.COURSE_PAGE_TITLE_XPATH);
 
-    private final SelenideElement courseTitle = $x("//h1");
     private final String title;
 
     public CoursePage() {
-        super($x("//h1"), CoursePage.class);
+        super(courseTitle, CoursePage.class);
         title = courseTitle.shouldBe(visible).getText();
-
     }
 
     public String getCourseTitle() {
-        logger.info("Заголовок курса: '{}'", title);
+        logger.info(PagesConstants.GET_TITLE_LOG_MESSAGE, title);
         return title;
     }
 }
