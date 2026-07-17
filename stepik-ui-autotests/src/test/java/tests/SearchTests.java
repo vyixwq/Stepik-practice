@@ -21,6 +21,16 @@ public class SearchTests extends BaseTest {
     private static final int DEFAULT_WAIT_TIME_SEC = 5;
     private static final int FIRST_ITEM = 0;
 
+    private static final String SEARCH_QUERY_PYTHON = "Python";
+    private static final String SEARCH_QUERY_CPP = "C++";
+    private static final String SEARCH_QUERY_AUTHOR = "Оксана Еськова";
+
+    private static final String EXPECTED_TXT_PYTHON = "python";
+
+    private static final String ASSERT_MSG_PYTHON_TITLE = "Заголовок курса '%s' должен содержать ключевое слово 'Python'";
+    private static final String ASSERT_MSG_SEARCH_EMPTY = "Поле поиска должно быть пустым после нажатия на крестик!";
+    private static final String ASSERT_MSG_CATALOG_NOT_EMPTY = "Каталог общего поиска должен успешно отображаться после сброса параметров";
+
     @Test
     @DisplayName("1. Текстовый поиск и навигация по страницам")
     void testSearchAndPagination() {
@@ -28,7 +38,7 @@ public class SearchTests extends BaseTest {
 
         HomePage homePage = new HomePage().openPage();
 
-        SearchResultsPage resultsPage = homePage.searchFor("Python");
+        SearchResultsPage resultsPage = homePage.searchFor(SEARCH_QUERY_PYTHON);
 
         resultsPage.clickNext();
 
@@ -39,8 +49,8 @@ public class SearchTests extends BaseTest {
         String actualTitle = new CoursePage().getCourseTitle();
 
         Assertions.assertTrue(
-                actualTitle.toLowerCase().contains("python"),
-                String.format("Заголовок курса '%s' должен содержать ключевое слово 'Python'", actualTitle));
+                actualTitle.toLowerCase().contains(EXPECTED_TXT_PYTHON),
+                String.format(ASSERT_MSG_PYTHON_TITLE, actualTitle));
 
         logger.info("=== ТЕСТ 1 УСПЕШНО ЗАВЕРШЕН ===\n");
     }
@@ -52,7 +62,7 @@ public class SearchTests extends BaseTest {
 
         HomePage homePage = new HomePage().openPage();
 
-        SearchResultsPage resultsPage = homePage.searchFor("C++");
+        SearchResultsPage resultsPage = homePage.searchFor(SEARCH_QUERY_CPP);
 
         resultsPage.clickNext();
 
@@ -61,14 +71,10 @@ public class SearchTests extends BaseTest {
         logger.info("Проверка, что поле поиска очищено, а выдача сбросилась");
         String searchInputValue = resultsPage.getSearchInputValue();
 
-        Assertions.assertTrue(
-                searchInputValue == null || searchInputValue.isEmpty(),
-                "Поле поиска должно быть пустым после нажатия на крестик!");
+        Assertions.assertTrue(searchInputValue == null || searchInputValue.isEmpty(), ASSERT_MSG_SEARCH_EMPTY);
 
         String firstCourseTitle = resultsPage.getFirstCourseTitle();
-        Assertions.assertFalse(
-                firstCourseTitle.isEmpty(),
-                "Каталог общего поиска должен успешно отображаться после сброса параметров");
+        Assertions.assertFalse(firstCourseTitle.isEmpty(), ASSERT_MSG_CATALOG_NOT_EMPTY);
 
         logger.info("=== ТЕСТ 5 УСПЕШНО ЗАВЕРШЕН ===\n");
     }
@@ -80,7 +86,7 @@ public class SearchTests extends BaseTest {
 
         HomePage homePage = new HomePage().openPage();
 
-        SearchResultsPage resultsPage = homePage.searchFor("Оксана Еськова");
+        SearchResultsPage resultsPage = homePage.searchFor(SEARCH_QUERY_AUTHOR);
 
         resultsPage.getCourseCard(FIRST_ITEM).clickFirstAuthor();
 

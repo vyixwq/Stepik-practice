@@ -13,19 +13,24 @@ import org.junit.jupiter.api.BeforeEach;
 
 public abstract class BaseTest {
 
+    private static final String BROWSER_TYPE = "chrome";
+    private static final long DEFAULT_TIMEOUT_MS = 10000;
+    private static final String BASE_URL = "https://stepik.org/catalog";
+    private static final String HOME_PAGE_PATH = "/";
+
     @BeforeAll
     static void setupBrowser() {
 
-        Configuration.browser = "chrome";
-        Configuration.timeout = 10000;
-        Configuration.baseUrl = "https://stepik.org/catalog";
+        Configuration.browser = BROWSER_TYPE;
+        Configuration.timeout = DEFAULT_TIMEOUT_MS;
+        Configuration.baseUrl = BASE_URL;
     }
 
 
     @BeforeEach
     void openBrowser() {
 
-        Selenide.open("/");
+        Selenide.open(HOME_PAGE_PATH);
     }
 
 

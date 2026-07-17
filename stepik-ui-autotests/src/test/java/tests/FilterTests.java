@@ -18,6 +18,44 @@ public class FilterTests extends BaseTest {
     private static final int PROMO_SEARCH_LIMIT = 20;
     private static final int FIRST_ITEM = 0;
 
+    private static final String SEARCH_QUERY_LINUX = "Linux";
+    private static final String SEARCH_QUERY_JAVA = "Java";
+    private static final String SEARCH_QUERY_QA_AUTO = "QA Automation";
+    private static final String SEARCH_QUERY_ML = "Machine Learning";
+    private static final String SEARCH_QUERY_DS = "Data Science";
+    private static final String SEARCH_QUERY_INVALID = "zxcvbnm123";
+    private static final String SEARCH_QUERY_BACKEND = "Backend";
+    private static final String SEARCH_QUERY_WEB_DESIGN = "Web Design";
+
+    private static final String FILTER_LANGUAGE = "language";
+    private static final String FILTER_TYPE = "type";
+    private static final String FILTER_DIFFICULTY = "difficulty";
+    private static final String TOGGLER_CERTIFICATE = "certificate";
+    private static final String TOGGLER_DISCOUNT = "discount";
+
+    private static final String VAL_LANG_EN = "en";
+    private static final String VAL_LANG_RU = "ru";
+    private static final String VAL_TYPE_SPEC = "spec";
+    private static final String VAL_DIFF_EASY = "easy";
+    private static final String VAL_DIFF_NORMAL = "normal";
+    private static final String VAL_DIFF_HARD = "hard";
+
+    private static final String EXPECTED_TXT_LINUX = "linux";
+    private static final String EXPECTED_TXT_JAVA = "java";
+    private static final String EXPECTED_TXT_QA = "qa";
+    private static final String EXPECTED_TXT_AUTO = "automation";
+    private static final String EXPECTED_TXT_DATA = "data";
+    private static final String EXPECTED_TXT_SCIENCE = "science";
+
+    private static final String ASSERT_MSG_LINUX = "Первый найденный курс '%s' должен содержать ключевое слово 'Linux'";
+    private static final String ASSERT_MSG_JAVA = "Первый найденный курс в ценовом диапазоне '%s' должен соответствовать запросу 'Java'";
+    private static final String ASSERT_MSG_QA_AUTO = "Найденный курс '%s' должен соответствовать тематике 'QA Automation'";
+    private static final String ASSERT_MSG_DS_TITLE = "Заголовок должен содержать 'Data Science'";
+    private static final String ASSERT_MSG_LANG_ACTIVE = "Фильтр 'Английский' должен остаться активным";
+    private static final String ASSERT_MSG_NOTHING_FOUND = "На странице должно быть сообщение 'ничего не найдено'";
+    private static final String ASSERT_MSG_PROMO = "В результатах фильтрации должен быть хотя бы один курс с отображаемой старой ценой";
+    private static final String ASSERT_MSG_FAVORITE = "Иконка сердечка должна изменить состояние на активное";
+
     @Test
     @DisplayName("2. Поиск с фильтрами")
     void testSearchWithFilters() {
@@ -25,18 +63,18 @@ public class FilterTests extends BaseTest {
 
         HomePage homePage = new HomePage().openPage();
 
-        SearchResultsPage resultsPage = homePage.searchFor("Linux");
+        SearchResultsPage resultsPage = homePage.searchFor(SEARCH_QUERY_LINUX);
 
-        resultsPage.applyCheckBoxFilter("language", "en");
+        resultsPage.applyCheckBoxFilter(FILTER_LANGUAGE, VAL_LANG_EN);
 
-        resultsPage.applyCheckBoxFilter("type", "spec");
+        resultsPage.applyCheckBoxFilter(FILTER_TYPE, VAL_TYPE_SPEC);
 
         logger.info("Проверка отображения результатов фильтрации по Linux");
         String firstTitle = resultsPage.getFirstCourseTitle();
 
         Assertions.assertTrue(
-                firstTitle.toLowerCase().contains("linux"),
-                String.format("Первый найденный курс '%s' должен содержать ключевое слово 'Linux'", firstTitle));
+                firstTitle.toLowerCase().contains(EXPECTED_TXT_LINUX),
+                String.format(ASSERT_MSG_LINUX, firstTitle));
 
         logger.info("=== ТЕСТ 2 УСПЕШНО ЗАВЕРШЕН ===\n");
     }
@@ -48,7 +86,7 @@ public class FilterTests extends BaseTest {
 
         HomePage homePage = new HomePage().openPage();
 
-        SearchResultsPage resultsPage = homePage.searchFor("Java");
+        SearchResultsPage resultsPage = homePage.searchFor(SEARCH_QUERY_JAVA);
 
         resultsPage.applyMinPriceFilter(MIN_PRICE_VAL);
 
@@ -58,10 +96,8 @@ public class FilterTests extends BaseTest {
         String firstTitle = resultsPage.getFirstCourseTitle();
 
         Assertions.assertTrue(
-                firstTitle.toLowerCase().contains("java"),
-                String.format(
-                        "Первый найденный курс в ценовом диапазоне '%s' должен соответствовать запросу 'Java'",
-                        firstTitle));
+                firstTitle.toLowerCase().contains(EXPECTED_TXT_JAVA),
+                String.format(ASSERT_MSG_JAVA, firstTitle));
 
         logger.info("=== ТЕСТ 3 УСПЕШНО ЗАВЕРШЕН ===\n");
     }
@@ -73,20 +109,18 @@ public class FilterTests extends BaseTest {
 
         HomePage homePage = new HomePage().openPage();
 
-        SearchResultsPage resultsPage = homePage.searchFor("QA Automation");
+        SearchResultsPage resultsPage = homePage.searchFor(SEARCH_QUERY_QA_AUTO);
 
-        resultsPage.applyCheckBoxFilter("difficulty", "hard");
+        resultsPage.applyCheckBoxFilter(FILTER_DIFFICULTY, VAL_DIFF_HARD);
 
-        resultsPage.applyTogglerFilter("certificate");
+        resultsPage.applyTogglerFilter(TOGGLER_CERTIFICATE);
 
         logger.info("Проверка отображения профессиональных курсов с сертификатами");
         String firstTitle = resultsPage.getFirstCourseTitle();
 
         Assertions.assertTrue(
-                firstTitle.toLowerCase().contains("qa") || firstTitle.toLowerCase().contains("automation"),
-                String.format(
-                        "Найденный курс '%s' должен соответствовать тематике 'QA Automation'",
-                        firstTitle));
+                firstTitle.toLowerCase().contains(EXPECTED_TXT_QA) || firstTitle.toLowerCase().contains(EXPECTED_TXT_AUTO),
+                String.format(ASSERT_MSG_QA_AUTO, firstTitle));
 
         logger.info("=== ТЕСТ 4 УСПЕШНО ЗАВЕРШЕН ===\n");
     }
@@ -98,23 +132,22 @@ public class FilterTests extends BaseTest {
 
         HomePage homePage = new HomePage().openPage();
 
-        SearchResultsPage resultsPage = homePage.searchFor("Machine Learning");
+        SearchResultsPage resultsPage = homePage.searchFor(SEARCH_QUERY_ML);
 
-        resultsPage.applyCheckBoxFilter("language", "en");
+        resultsPage.applyCheckBoxFilter(FILTER_LANGUAGE, VAL_LANG_EN);
 
         resultsPage.clickClear();
 
-        resultsPage.searchAgain("Data Science");
+        resultsPage.searchAgain(SEARCH_QUERY_DS);
 
         logger.info("Проверка сохранения фильтра и смены текста");
         String firstTitle = resultsPage.getFirstCourseTitle();
         Assertions.assertTrue(
-                firstTitle.toLowerCase().contains("data") || firstTitle.toLowerCase().contains("science"),
-                "Заголовок должен содержать 'Data Science'");
+                firstTitle.toLowerCase().contains(EXPECTED_TXT_DATA) || firstTitle.toLowerCase().contains(EXPECTED_TXT_SCIENCE),
+                ASSERT_MSG_DS_TITLE);
 
         Assertions.assertTrue(
-                resultsPage.isFilterSelected("language", "en"),
-                "Фильтр 'Английский' должен остаться активным");
+                resultsPage.isFilterSelected(FILTER_LANGUAGE, VAL_LANG_EN), ASSERT_MSG_LANG_ACTIVE);
 
         logger.info("=== ТЕСТ 6 УСПЕШНО ЗАВЕРШЕН ===\n");
     }
@@ -124,15 +157,13 @@ public class FilterTests extends BaseTest {
     void testNonExistentSearchWithFilters() {
         logger.info("=== ТЕСТ 7: Несуществующий запрос с фильтрами ===");
 
-        SearchResultsPage resultsPage = new HomePage().openPage().searchFor("zxcvbnm123");
+        SearchResultsPage resultsPage = new HomePage().openPage().searchFor(SEARCH_QUERY_INVALID);
 
-        resultsPage.applyCheckBoxFilter("language", "ru");
-        resultsPage.applyCheckBoxFilter("difficulty", "easy");
+        resultsPage.applyCheckBoxFilter(FILTER_LANGUAGE, VAL_LANG_RU);
+        resultsPage.applyCheckBoxFilter(FILTER_DIFFICULTY, VAL_DIFF_EASY);
 
         logger.info("Проверка отображения заглушки...");
-        Assertions.assertTrue(
-                resultsPage.isNothingFoundMessageVisible(),
-                "На странице должно быть сообщение 'ничего не найдено'");
+        Assertions.assertTrue(resultsPage.isNothingFoundMessageVisible(),ASSERT_MSG_NOTHING_FOUND);
 
         logger.info("=== ТЕСТ 7 УСПЕШНО ЗАВЕРШЕН ===\n");
     }
@@ -142,11 +173,11 @@ public class FilterTests extends BaseTest {
     void testFilteringPromoCourses() {
         logger.info("=== ТЕСТ 9: Фильтрация акционных курсов ===");
 
-        SearchResultsPage resultsPage = new HomePage().openPage().searchFor("Backend");
+        SearchResultsPage resultsPage = new HomePage().openPage().searchFor(SEARCH_QUERY_BACKEND);
 
-        resultsPage.applyCheckBoxFilter("type", "spec");
+        resultsPage.applyCheckBoxFilter(FILTER_TYPE, VAL_TYPE_SPEC);
 
-        resultsPage.applyTogglerFilter("discount");
+        resultsPage.applyTogglerFilter(TOGGLER_DISCOUNT);
 
         logger.info("Проверка наличия старой цены на карточках результатов");
 
@@ -160,9 +191,7 @@ public class FilterTests extends BaseTest {
             }
         }
 
-        Assertions.assertTrue(
-                foundPromo,
-                "В результатах фильтрации должен быть хотя бы один курс с отображаемой старой ценой");
+        Assertions.assertTrue(foundPromo,ASSERT_MSG_PROMO);
 
         logger.info("=== ТЕСТ 9 УСПЕШНО ЗАВЕРШЕН ===\n");
     }
@@ -172,16 +201,14 @@ public class FilterTests extends BaseTest {
     void testAddToFavoritesFromSearch() {
         logger.info("=== ТЕСТ 10: Добавление курса в избранное из поиска ===");
 
-        SearchResultsPage resultsPage = new HomePage().openPage().searchFor("Web Design");
+        SearchResultsPage resultsPage = new HomePage().openPage().searchFor(SEARCH_QUERY_WEB_DESIGN);
 
-        resultsPage.applyCheckBoxFilter("difficulty", "normal");
+        resultsPage.applyCheckBoxFilter(FILTER_DIFFICULTY, VAL_DIFF_NORMAL);
 
         resultsPage.getCourseCard(FIRST_ITEM).addToWishlist();
 
         logger.info("Проверка, что курс добавлен в избранное");
-        Assertions.assertTrue(
-                resultsPage.firstCourseIsFavorite(),
-                "Иконка сердечка должна изменить состояние на активное");
+        Assertions.assertTrue(resultsPage.firstCourseIsFavorite(), ASSERT_MSG_FAVORITE);
 
         logger.info("=== ТЕСТ 10 УСПЕШНО ЗАВЕРШЕН ===\n");
     }
